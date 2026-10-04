@@ -28,7 +28,7 @@ export default function App({ Component, pageProps }) {
   return (
     <div className={`app ${mode}`}>
       <Head>
-        <title>Anurag Karmakar | Portfolio</title>
+        <title>Anurag Karmakar</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </Head>
       <Component
