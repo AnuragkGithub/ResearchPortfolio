@@ -1,0 +1,704 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap');
+
+:root {
+  --bg: #050509;
+  --bg-gradient: linear-gradient(135deg, #020206 0%, #090a12 100%);
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-strong: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-soft: rgba(255, 255, 255, 0.03);
+  --glass: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #eef2ff;
+  --text-muted: rgba(238, 242, 255, 0.72);
+  --accent: #38bdf8;
+  --accent-strong: #a855f7;
+  --accent-soft: #83c5fd;
+  --shadow: 0 35px 100px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.18);
+  --stroke: rgba(255, 255, 255, 0.06);
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bg-primary: var(--bg);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border);
+  --border-hover: rgba(56, 189, 248, 0.18);
+  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);
+  --accent-secondary: var(--text-muted);
+  --tag-bg: rgba(255, 255, 255, 0.08);
+  --tag-text: var(--text-muted);
+}
+
+html {
+  scroll-behavior: smooth;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  overflow-x: clip;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg);
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+body.app {
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+#__next {
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.section-padding {
+  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);
+}
+
+@media (max-width: 640px) {
+  .section-padding {
+    padding: 4.5rem 1rem;
+  }
+}
+
+body.app.cyber {
+  --bg: #050509;
+  --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);
+  --panel: rgba(255, 255, 255, 0.05);
+  --panel-strong: rgba(255, 255, 255, 0.12);
+  --text: #f3f4ff;
+  --text-muted: rgba(243, 244, 255, 0.72);
+  --border: rgba(56, 189, 248, 0.28);
+  --accent: #38bdf8;
+  --accent-strong: #c084fc;
+  --accent-soft: #0ea5e9;
+  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --bg-primary: var(--bg);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border);
+  --border-hover: rgba(56, 189, 248, 0.28);
+  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.18);
+  --accent-secondary: rgba(243, 244, 255, 0.72);
+  --tag-bg: rgba(255, 255, 255, 0.06);
+  --tag-text: rgba(243, 244, 255, 0.72);
+}
+
+body.app.dark {
+  --bg: #05060e;
+  --bg-gradient: linear-gradient(135deg, #05060e 0%, #0d1322 100%);
+  --panel: rgba(15, 23, 42, 0.78);
+  --panel-strong: rgba(255, 255, 255, 0.08);
+  --surface: rgba(15, 23, 42, 0.62);
+  --surface-soft: rgba(15, 23, 42, 0.35);
+  --glass: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f8fafc;
+  --text-muted: rgba(248, 250, 252, 0.72);
+  --accent: #38bdf8;
+  --accent-strong: #7c3aed;
+  --accent-soft: #60a5fa;
+  --shadow: 0 35px 100px rgba(0, 0, 0, 0.6);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --bg-primary: var(--bg);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border);
+  --border-hover: rgba(56, 189, 248, 0.22);
+  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);
+  --accent-secondary: rgba(248, 250, 252, 0.72);
+  --tag-bg: rgba(255, 255, 255, 0.06);
+  --tag-text: rgba(248, 250, 252, 0.72);
+}
+
+body.app.light {
+  --bg: #f4f6fb;
+  --bg-gradient: linear-gradient(135deg, #edf2ff 0%, #e2e8f0 100%);
+  --panel: rgba(255, 255, 255, 0.94);
+  --panel-strong: rgba(255, 255, 255, 0.98);
+  --text: #0f172a;
+  --text-muted: rgba(15, 23, 42, 0.68);
+  --border: rgba(15, 23, 42, 0.12);
+  --accent: #2563eb;
+  --accent-strong: #475569;
+  --accent-soft: #94a3b8;
+  --shadow: 0 35px 100px rgba(15, 23, 42, 0.18);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --bg-primary: var(--bg);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border);
+  --border-hover: rgba(37, 99, 235, 0.18);
+  --accent-glow: 0 12px 30px rgba(37, 99, 235, 0.14);
+  --accent-secondary: rgba(15, 23, 42, 0.72);
+  --tag-bg: rgba(15, 23, 42, 0.08);
+  --tag-text: rgba(15, 23, 42, 0.72);
+}
+
+body.app.light .navbar {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.app.light button.categoryButton.active,
+body.app.light .links button:hover,
+body.app.light button.timezoneOption:hover,
+body.app.light button.timezoneOption.selected {
+  color: var(--accent) !important;
+}
+
+body.app.dark .navbar {
+  background: rgba(10, 10, 15, 0.95);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.app.cyber .navbar {
+  background: rgba(7, 7, 10, 0.92);
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+:root,
+body.app,
+body.app.light,
+body.app.dark,
+body.app.cyber {
+  --bg: #f5f5ef;
+  --bg-gradient: linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%);
+  --panel: rgba(255, 255, 250, 0.82);
+  --panel-strong: #fffefa;
+  --surface: #fffefa;
+  --surface-soft: #eeefe8;
+  --glass: rgba(255, 255, 250, 0.88);
+  --border: #d9ded4;
+  --border-strong: #bdc9bd;
+  --text: #202b26;
+  --text-muted: #637169;
+  --accent: #28745d;
+  --accent-strong: #b35e43;
+  --accent-soft: #85a68e;
+  --shadow: 0 24px 70px rgba(31, 49, 39, 0.09);
+  --shadow-soft: 0 8px 28px rgba(31, 49, 39, 0.07);
+  --stroke: #e2e5dd;
+  --card-bg: #fffefa;
+  --font-sans: 'DM Sans', sans-serif;
+  --bg-primary: var(--bg);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border);
+  --border-hover: #a9c2af;
+  --accent-glow: 0 8px 24px rgba(40, 116, 93, 0.13);
+  --accent-secondary: #637169;
+  --tag-bg: #e9eee7;
+  --tag-text: #405e4f;
+}
+
+html { scroll-padding-top: 88px; }
+
+body,
+body.app,
+body.app.light,
+body.app.dark,
+body.app.cyber {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(73, 99, 77, 0.07) 0.55px, transparent 0.55px),
+    linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%);
+  background-size: 8px 8px, auto;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+body.app .navbar {
+  top: 16px !important;
+  width: min(94%, 1180px) !important;
+  min-height: 64px;
+  padding: 9px 18px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  background: rgba(250, 250, 245, 0.94) !important;
+  box-shadow: 0 6px 24px rgba(31, 49, 39, 0.07) !important;
+  backdrop-filter: blur(14px);
+}
+
+body.app .navbar .clockButton {
+  min-height: 38px;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 12px;
+}
+
+body.app .navbar .clockDot,
+body.app .heroSplitStage .badge-dot {
+  background: var(--accent) !important;
+  box-shadow: 0 0 0 4px rgba(40, 116, 93, 0.12) !important;
+}
+
+body.app .navbar .links { gap: clamp(14px, 2.2vw, 30px); }
+
+body.app .navbar .links button {
+  padding: 8px 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+body.app .navbar .links button:hover { color: var(--accent) !important; }
+body.app .navbar .modeButton { display: none; }
+
+body.app .heroSplitStage {
+  height: auto !important;
+  min-height: 100svh;
+  padding-top: 75px;
+  background: var(--bg-gradient) !important;
+}
+
+body.app .heroSplitPin {
+  position: relative !important;
+  top: auto !important;
+  min-height: 760px !important;
+  height: auto !important;
+  padding: 105px clamp(22px, 7vw, 100px) 86px !important;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+body.app .heroGridTexture {
+  opacity: 0.15;
+  background-size: 44px 44px;
+  mask-image: linear-gradient(90deg, #000, transparent 80%);
+}
+
+body.app .heroSplitLayout {
+  width: min(100%, 1320px);
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: clamp(38px, 6vw, 96px) !important;
+}
+
+body.app .heroSplitCopy,
+body.app .heroSplitStage.is-centered .heroSplitCopy {
+  width: 56% !important;
+  flex: 1 1 56% !important;
+  transform: none !important;
+}
+
+body.app .heroSplitInner,
+body.app .heroSplitStage.is-centered .heroSplitInner {
+  width: 100% !important;
+  max-width: 690px !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+body.app .heroSplitStage .badge {
+  padding: 7px 0 !important;
+  margin: 0 0 22px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--accent) !important;
+  font-size: 10px !important;
+  letter-spacing: 1.7px !important;
+}
+
+body.app .heroSplitStage .name-container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  margin: 0 0 28px !important;
+  color: var(--text) !important;
+  font-family: 'Literata', Georgia, serif !important;
+  font-size: clamp(3rem, 6vw, 5.9rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  line-height: 0.99 !important;
+}
+
+body.app .heroSplitStage .name-surname { color: var(--accent) !important; }
+
+body.app .heroSplitStage .name-letter:hover {
+  color: var(--accent-strong) !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+
+body.app .heroSplitStage .heroAbout {
+  padding: 0 !important;
+  margin: 0 0 26px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+body.app .heroSplitStage .heroAbout:hover { transform: none !important; }
+
+body.app .heroSplitStage .heroAbout h2 {
+  margin: 0 0 12px !important;
+  color: var(--accent-strong) !important;
+  font-family: 'Literata', Georgia, serif;
+  font-size: 18px !important;
+  font-weight: 600;
+}
+
+body.app .heroSplitStage .heroAbout p {
+  max-width: 620px;
+  color: var(--text-muted) !important;
+  font-size: 15px !important;
+  line-height: 1.8 !important;
+}
+
+body.app .heroSplitStage .heroAbout .heroAboutExtra { margin-top: 10px !important; }
+
+body.app .heroSplitStage .heroPhotoGallery {
+  width: 40% !important;
+  flex: 0 1 480px !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+body.app .heroSplitStage .photoGalleryHeading { font-size: 10px; letter-spacing: 1.2px; }
+body.app .heroSplitStage .photoGalleryEyebrow { color: var(--accent); }
+
+body.app .heroSplitStage .photoStack {
+  width: 100%;
+  height: min(48vh, 430px);
+  min-height: 300px;
+}
+
+body.app .heroSplitStage .photoCard {
+  border-color: rgba(255, 255, 250, 0.9);
+  border-radius: 5px !important;
+  box-shadow: 0 18px 38px rgba(31, 49, 39, 0.16) !important;
+}
+
+body.app .heroSplitStage .photoCard:hover {
+  box-shadow: 0 20px 44px rgba(31, 49, 39, 0.2) !important;
+}
+
+body.app .heroSplitStage .photoGalleryArrows button {
+  border-color: var(--border) !important;
+  border-radius: 4px !important;
+  background: var(--panel-strong) !important;
+  color: var(--text) !important;
+}
+
+body.app .heroSplitStage .heroScrollCue {
+  bottom: 28px;
+  left: clamp(24px, 7vw, 100px);
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  transform: none;
+}
+
+body.app .heroSplitStage .scrollCueLine { background: var(--accent-strong); }
+
+body.app .aboutHeader h2,
+body.app .experienceHeader h2,
+body.app .projectHeader .my-work-title,
+body.app .contactCard h2,
+body.app .sectionTitle {
+  color: var(--text) !important;
+  font-family: 'Literata', Georgia, serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+body.app .projectHeader .my-work-title { font-size: clamp(2.3rem, 5vw, 4.2rem) !important; }
+
+body.app .aboutTag,
+body.app .sectionEyebrow,
+body.app .cardLabel,
+body.app .experienceHeader .tag,
+body.app .projectHeader > span,
+body.app .contactCard .label {
+  color: var(--accent) !important;
+  background: transparent !important;
+  letter-spacing: 1.7px !important;
+}
+
+body.app .aboutTag,
+body.app .experienceHeader .tag { padding: 0 !important; border: 0 !important; }
+
+body.app .aboutCard,
+body.app .expCard,
+body.app .skillGroup,
+body.app .projectCard,
+body.app .contactCard {
+  border: 1px solid var(--border) !important;
+  border-radius: 5px !important;
+  background: rgba(255, 255, 250, 0.72) !important;
+  box-shadow: 0 8px 28px rgba(31, 49, 39, 0.045) !important;
+  backdrop-filter: none !important;
+}
+
+body.app .interactive-card:hover,
+body.app .projectCard:hover,
+body.app .expCard:hover {
+  border-color: #9bb8a4 !important;
+  box-shadow: 0 14px 34px rgba(31, 49, 39, 0.09) !important;
+  transform: translateY(-3px);
+}
+
+body.app .technicalItem,
+body.app .projectCard,
+body.app .skillGroup { transition-duration: 220ms; }
+
+body.app .technicalLabel,
+body.app .projectCategory { color: var(--accent) !important; }
+
+body.app .primary-btn,
+body.app .secondary-btn,
+body.app .categoryButton,
+body.app .contactList a { border-radius: 4px !important; }
+
+body.app .primary-btn {
+  border: 1px solid var(--accent) !important;
+  background: var(--accent) !important;
+  box-shadow: none !important;
+  color: #fffefa !important;
+}
+
+body.app .secondary-btn {
+  border-color: var(--border-strong) !important;
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+body.app .categoryButton.active {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: white !important;
+}
+
+body.app .contact { min-height: 68vh; }
+
+@media (max-width: 760px) {
+  body.app .navbar {
+    top: 10px !important;
+    width: calc(100% - 24px) !important;
+    padding: 7px 10px !important;
+    gap: 4px;
+  }
+
+  body.app .navbar .clockButton { padding: 6px !important; }
+  body.app .navbar .zoneName,
+  body.app .navbar .clockChevron { display: none; }
+  body.app .navbar .links { gap: 12px; }
+  body.app .navbar .links button { font-size: 11px !important; }
+
+  body.app .heroSplitStage { min-height: 0; padding-top: 70px; }
+  body.app .heroSplitPin { min-height: 0 !important; padding: 68px 22px 74px !important; }
+  body.app .heroSplitLayout { flex-direction: column !important; align-items: stretch !important; gap: 30px !important; }
+  body.app .heroSplitCopy,
+  body.app .heroSplitStage.is-centered .heroSplitCopy { width: 100% !important; flex: 1 1 auto !important; }
+  body.app .heroSplitInner,
+  body.app .heroSplitStage.is-centered .heroSplitInner { max-width: none !important; align-items: flex-start !important; text-align: left !important; }
+  body.app .heroSplitStage .name-container { font-size: clamp(2.8rem, 12vw, 4.5rem) !important; }
+  body.app .heroSplitStage .heroPhotoGallery { width: 100% !important; flex: 1 1 auto !important; }
+  body.app .heroSplitStage .photoStack { height: 330px; min-height: 280px; }
+  body.app .heroSplitStage .heroScrollCue { display: none; }
+  body.app .educationGrid { grid-template-columns: 1fr; }
+  body.app .aboutCard,
+  body.app .expCard,
+  body.app .contactCard { padding: 24px !important; }
+}
+
+@media (max-width: 520px) {
+  body.app .navbar .clockWrap { display: none; }
+  body.app .navbar .links { justify-content: space-between; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.app *,
+  body.app *::before,
+  body.app *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body.app,
+body.app.light,
+body.app.dark,
+body.app.cyber {
+  --bg: #f5f5ef !important;
+  --bg-gradient: linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%) !important;
+  --panel: rgba(255, 255, 250, 0.82) !important;
+  --panel-strong: #fffefa !important;
+  --surface: #fffefa !important;
+  --surface-soft: #eeefe8 !important;
+  --glass: rgba(255, 255, 250, 0.88) !important;
+  --border: #d9ded4 !important;
+  --border-strong: #bdc9bd !important;
+  --text: #202b26 !important;
+  --text-muted: #637169 !important;
+  --accent: #28745d !important;
+  --accent-strong: #b35e43 !important;
+  --accent-soft: #85a68e !important;
+  --shadow: 0 24px 70px rgba(31, 49, 39, 0.09) !important;
+  --shadow-soft: 0 8px 28px rgba(31, 49, 39, 0.07) !important;
+  --stroke: #e2e5dd !important;
+  --card-bg: #fffefa !important;
+  --font-sans: 'DM Sans', sans-serif !important;
+  --bg-primary: var(--bg) !important;
+  --text-primary: var(--text) !important;
+  --text-secondary: var(--text-muted) !important;
+  --border-color: var(--border) !important;
+  --border-hover: #a9c2af !important;
+  --accent-glow: 0 8px 24px rgba(40, 116, 93, 0.13) !important;
+  --accent-secondary: #637169 !important;
+  --tag-bg: #e9eee7 !important;
+  --tag-text: #405e4f !important;
+  background-color: #f5f5ef !important;
+  background-image:
+    radial-gradient(rgba(73, 99, 77, 0.07) 0.55px, transparent 0.55px),
+    linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%) !important;
+  color: #202b26 !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+body.app .cursor { display: none !important; }
+
+body.app .dailyThought {
+  padding-top: clamp(4.5rem, 9vw, 7rem);
+  padding-bottom: clamp(4.5rem, 9vw, 7rem);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(232, 237, 228, 0.55);
+}
+
+body.app .dailyThoughtInner {
+  width: min(100%, 920px);
+  margin: 0 auto;
+}
+
+body.app .dailyThoughtMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+body.app .dailyThoughtMeta time {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.app .dailyThought blockquote {
+  max-width: 860px;
+  margin: 0;
+  padding-left: clamp(18px, 3vw, 34px);
+  border-left: 2px solid var(--accent-strong);
+  color: var(--text);
+  font-family: 'Literata', Georgia, serif;
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+body.app .dailyThoughtByline {
+  display: block;
+  margin: 20px 0 0 clamp(20px, 3vw, 36px);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+body.app .portfolioViews {
+  padding: 28px 22px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 250, 0.56);
+}
+
+body.app .portfolioViewsInner {
+  display: flex;
+  width: min(100%, 920px);
+  margin: 0 auto;
+  align-items: baseline;
+  justify-content: center;
+  gap: 16px;
+}
+
+body.app .portfolioViewsLabel {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+body.app .portfolioViewsCount {
+  color: var(--text);
+  font-family: 'Literata', Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+body.app .portfolioViewsCaption {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+body.app .visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 560px) {
+  body.app .dailyThought { padding: 4rem 22px; }
+  body.app .dailyThoughtMeta { margin-bottom: 20px; }
+  body.app .portfolioViewsInner { flex-wrap: wrap; gap: 10px; }
+}

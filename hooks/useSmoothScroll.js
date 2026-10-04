@@ -1,0 +1,17 @@
+import { useEffect } from "react";
+import Lenis from "lenis";
+
+export default function useSmoothScroll() {
+  useEffect(() => {
+    const lenis = new Lenis({ smooth: true });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy();
+  }, []);
+}
