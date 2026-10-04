@@ -6,7 +6,8 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Lenis from "lenis";
-import ResearchScene from "../components/ResearchScene";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Float, OrbitControls, Stars, useGLTF } from "@react-three/drei";
 
 
 // ================= CustomCursor.js =================
@@ -1401,8 +1402,1081 @@ function Contact() {
     </section>
   );
 }
+// ================= 3D Hero Visual =================
+// ================= FREE 3D ROBOT =================
+
+// ================= HUMANOID ROBOT =================
+
+function Robot3D({ mode = "light" }) {
+  const robot = useRef();
+
+  const isLight = mode === "light";
+  const isCyber = mode === "cyber";
+  const isDark = mode === "dark";
+
+  const palette = {
+    body: isLight
+      ? "#b8c2bf"
+      : isCyber
+      ? "#26353b"
+      : "#27312f",
+
+    bodyDark: isLight
+      ? "#68736f"
+      : isCyber
+      ? "#101c22"
+      : "#0c1312",
+
+    silver: isLight
+      ? "#e1e6e4"
+      : isCyber
+      ? "#8299a3"
+      : "#8a9692",
+
+    joint: isLight
+      ? "#7f8b87"
+      : isCyber
+      ? "#526c77"
+      : "#46514e",
+
+    visor: isLight
+      ? "#203532"
+      : isCyber
+      ? "#06151d"
+      : "#061311",
+
+    glow: isLight
+      ? "#168a68"
+      : isCyber
+      ? "#38bdf8"
+      : "#72f0b7",
+
+    glowEmissive: isLight
+      ? "#0c624c"
+      : isCyber
+      ? "#0ea5e9"
+      : "#35d99a",
+  };
+
+  const metal = {
+    color: palette.body,
+    metalness: 0.82,
+    roughness: isLight ? 0.3 : 0.2,
+  };
+
+  const darkMetal = {
+    color: palette.bodyDark,
+    metalness: 0.92,
+    roughness: 0.17,
+  };
+
+  const silver = {
+    color: palette.silver,
+    metalness: 0.92,
+    roughness: 0.2,
+  };
+
+  const joint = {
+    color: palette.joint,
+    metalness: 0.9,
+    roughness: 0.24,
+  };
+
+  const glow = {
+    color: palette.glow,
+    emissive: palette.glowEmissive,
+    emissiveIntensity: isLight ? 1.4 : 2.8,
+    metalness: 0.25,
+    roughness: 0.14,
+  };
+
+  useFrame((state, delta) => {
+    if (!robot.current) return;
+
+    const t = state.clock.elapsedTime;
+
+    robot.current.rotation.y += delta * 0.11;
+
+    robot.current.position.y =
+      Math.sin(t * 1.25) * 0.035;
+
+    robot.current.rotation.z =
+      Math.sin(t * 0.65) * 0.012;
+  });
+
+  return (
+    <group
+      ref={robot}
+      position={[0, -0.82, 0]}
+      scale={0.72}
+    >
+
+      {/* ================= HEAD ================= */}
+
+      <group position={[0, 1.88, 0]}>
+
+        {/* Neck */}
+        <mesh position={[0, -0.43, 0]}>
+          <cylinderGeometry args={[0.15, 0.19, 0.25, 24]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        {/* Head shell */}
+        <mesh>
+          <sphereGeometry args={[0.45, 32, 24]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        {/* Face visor */}
+        <mesh position={[0, 0.01, 0.405]}>
+          <sphereGeometry
+            args={[
+              0.345,
+              32,
+              20,
+              0,
+              Math.PI * 2,
+              0,
+              Math.PI * 0.55,
+            ]}
+          />
+
+          <meshStandardMaterial
+            color={palette.visor}
+            metalness={0.8}
+            roughness={0.08}
+            emissive={palette.glowEmissive}
+            emissiveIntensity={isLight ? 0.15 : 0.35}
+          />
+        </mesh>
+
+        {/* Eye strips */}
+        <mesh position={[-0.135, 0.06, 0.715]}>
+          <boxGeometry args={[0.13, 0.035, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        <mesh position={[0.135, 0.06, 0.715]}>
+          <boxGeometry args={[0.13, 0.035, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        {/* Head side modules */}
+        <mesh position={[-0.46, 0, 0]}>
+          <cylinderGeometry args={[0.105, 0.105, 0.15, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0.46, 0, 0]}>
+          <cylinderGeometry args={[0.105, 0.105, 0.15, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+      </group>
 
 
+      {/* ================= CHEST ================= */}
+
+      <group position={[0, 0.68, 0]}>
+
+        {/* Main torso */}
+        <mesh>
+          <boxGeometry args={[0.86, 0.98, 0.46]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        {/* Upper chest armor */}
+        <mesh position={[0, 0.14, 0.245]}>
+          <boxGeometry args={[0.68, 0.5, 0.07]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        {/* Shoulder chest plates */}
+        <mesh position={[-0.27, 0.27, 0.26]}>
+          <boxGeometry args={[0.17, 0.12, 0.05]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0.27, 0.27, 0.26]}>
+          <boxGeometry args={[0.17, 0.12, 0.05]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        {/* Central reactor */}
+        <mesh position={[0, 0.09, 0.3]}>
+          <cylinderGeometry args={[0.115, 0.115, 0.045, 32]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        {/* Chest light bars */}
+        <mesh position={[-0.24, 0.29, 0.3]}>
+          <boxGeometry args={[0.17, 0.022, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        <mesh position={[0.24, 0.29, 0.3]}>
+          <boxGeometry args={[0.17, 0.022, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        {/* Waist */}
+        <mesh position={[0, -0.58, 0]}>
+          <cylinderGeometry args={[0.28, 0.35, 0.23, 24]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        {/* Waist light */}
+        <mesh position={[0, -0.61, 0.27]}>
+          <boxGeometry args={[0.22, 0.025, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+      </group>
+
+
+      {/* ================= LEFT ARM ================= */}
+
+      <group position={[-0.59, 0.98, 0]}>
+
+        <mesh>
+          <sphereGeometry args={[0.23, 24, 20]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[-0.04, 0, 0]}>
+          <sphereGeometry args={[0.27, 24, 18]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[-0.04, -0.39, 0]}>
+          <capsuleGeometry args={[0.13, 0.46, 8, 16]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[-0.04, -0.68, 0]}>
+          <sphereGeometry args={[0.14, 20, 16]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[-0.04, -0.98, 0]}>
+          <capsuleGeometry args={[0.135, 0.46, 8, 16]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        <mesh position={[-0.04, -1.27, 0]}>
+          <cylinderGeometry args={[0.105, 0.11, 0.13, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        {/* Palm */}
+        <mesh position={[-0.04, -1.45, 0]}>
+          <boxGeometry args={[0.26, 0.26, 0.18]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        {/* Fingers */}
+        {[-0.105, -0.035, 0.035, 0.105].map((x, i) => (
+          <mesh
+            key={`left-finger-${i}`}
+            position={[x - 0.04, -1.63, 0]}
+          >
+            <capsuleGeometry args={[0.032, 0.14, 6, 10]} />
+            <meshStandardMaterial {...silver} />
+          </mesh>
+        ))}
+
+        {/* Thumb */}
+        <mesh
+          position={[-0.18, -1.51, 0.01]}
+          rotation={[0, 0, -0.7]}
+        >
+          <capsuleGeometry args={[0.035, 0.13, 6, 10]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+      </group>
+
+
+      {/* ================= RIGHT ARM ================= */}
+
+      <group position={[0.59, 0.98, 0]}>
+
+        <mesh>
+          <sphereGeometry args={[0.23, 24, 20]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[0.04, 0, 0]}>
+          <sphereGeometry args={[0.27, 24, 18]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[0.04, -0.39, 0]}>
+          <capsuleGeometry args={[0.13, 0.46, 8, 16]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[0.04, -0.68, 0]}>
+          <sphereGeometry args={[0.14, 20, 16]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[0.04, -0.98, 0]}>
+          <capsuleGeometry args={[0.135, 0.46, 8, 16]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        <mesh position={[0.04, -1.27, 0]}>
+          <cylinderGeometry args={[0.105, 0.11, 0.13, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        {/* Palm */}
+        <mesh position={[0.04, -1.45, 0]}>
+          <boxGeometry args={[0.26, 0.26, 0.18]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        {/* Fingers */}
+        {[-0.105, -0.035, 0.035, 0.105].map((x, i) => (
+          <mesh
+            key={`right-finger-${i}`}
+            position={[x + 0.04, -1.63, 0]}
+          >
+            <capsuleGeometry args={[0.032, 0.14, 6, 10]} />
+            <meshStandardMaterial {...silver} />
+          </mesh>
+        ))}
+
+        {/* Thumb */}
+        <mesh
+          position={[0.18, -1.51, 0.01]}
+          rotation={[0, 0, 0.7]}
+        >
+          <capsuleGeometry args={[0.035, 0.13, 6, 10]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+      </group>
+
+
+      {/* ================= LEFT LEG ================= */}
+
+      <group position={[-0.25, -0.03, 0]}>
+
+        <mesh>
+          <sphereGeometry args={[0.18, 22, 18]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[0, -0.39, 0]}>
+          <capsuleGeometry args={[0.175, 0.58, 8, 16]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[0, -0.75, 0.025]}>
+          <sphereGeometry args={[0.155, 22, 18]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0, -0.75, 0.17]}>
+          <boxGeometry args={[0.075, 0.022, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        <mesh position={[0, -1.1, 0]}>
+          <capsuleGeometry args={[0.15, 0.58, 8, 16]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        <mesh position={[0, -1.47, 0]}>
+          <cylinderGeometry args={[0.095, 0.11, 0.14, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0, -1.62, 0.1]}>
+          <boxGeometry args={[0.34, 0.2, 0.52]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+      </group>
+
+
+      {/* ================= RIGHT LEG ================= */}
+
+      <group position={[0.25, -0.03, 0]}>
+
+        <mesh>
+          <sphereGeometry args={[0.18, 22, 18]} />
+          <meshStandardMaterial {...joint} />
+        </mesh>
+
+        <mesh position={[0, -0.39, 0]}>
+          <capsuleGeometry args={[0.175, 0.58, 8, 16]} />
+          <meshStandardMaterial {...metal} />
+        </mesh>
+
+        <mesh position={[0, -0.75, 0.025]}>
+          <sphereGeometry args={[0.155, 22, 18]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0, -0.75, 0.17]}>
+          <boxGeometry args={[0.075, 0.022, 0.025]} />
+          <meshStandardMaterial {...glow} />
+        </mesh>
+
+        <mesh position={[0, -1.1, 0]}>
+          <capsuleGeometry args={[0.15, 0.58, 8, 16]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+        <mesh position={[0, -1.47, 0]}>
+          <cylinderGeometry args={[0.095, 0.11, 0.14, 20]} />
+          <meshStandardMaterial {...silver} />
+        </mesh>
+
+        <mesh position={[0, -1.62, 0.1]}>
+          <boxGeometry args={[0.34, 0.2, 0.52]} />
+          <meshStandardMaterial {...darkMetal} />
+        </mesh>
+
+      </group>
+
+    </group>
+  );
+}
+// ================= FREE 3D ROCKET =================
+// ================= ROCKET =================
+
+function Rocket3D({ active, mode = "light" }) {
+  const rocket = useRef();
+  const startTime = useRef(null);
+
+  const isLight = mode === "light";
+  const isCyber = mode === "cyber";
+
+  const rocketBody = isLight
+    ? "#d5dcda"
+    : isCyber
+    ? "#27343a"
+    : "#b9c4c0";
+
+  const rocketDark = isLight
+    ? "#53615d"
+    : isCyber
+    ? "#0b1a21"
+    : "#18201e";
+
+  const rocketAccent = isCyber
+    ? "#38bdf8"
+    : isLight
+    ? "#168a68"
+    : "#72f0b7";
+
+  useEffect(() => {
+    if (active) {
+      startTime.current = null;
+    }
+  }, [active]);
+
+  useFrame((state) => {
+    if (!rocket.current || !active) return;
+
+    if (startTime.current === null) {
+      startTime.current = state.clock.elapsedTime;
+    }
+
+    const elapsed =
+      state.clock.elapsedTime - startTime.current;
+
+    const duration = 3.0;
+
+    if (elapsed < duration) {
+      const progress = elapsed / duration;
+
+      const eased =
+        progress * progress * (3 - 2 * progress);
+
+      // Controlled takeoff — stays inside frame
+      rocket.current.position.y =
+        -0.55 + eased * 1.65;
+
+      rocket.current.rotation.z =
+        Math.sin(elapsed * 3) * 0.02;
+    } else {
+      // Hold near upper-middle area instead of leaving screen
+      rocket.current.position.y = 1.1;
+      rocket.current.rotation.z = 0;
+    }
+  });
+
+  return (
+    <group
+      ref={rocket}
+      position={[0, -0.55, 0]}
+      scale={0.68}
+    >
+
+      {/* BODY */}
+      <mesh>
+        <cylinderGeometry args={[0.28, 0.37, 1.55, 32]} />
+        <meshStandardMaterial
+          color={rocketBody}
+          metalness={0.72}
+          roughness={0.23}
+        />
+      </mesh>
+
+      {/* NOSE */}
+      <mesh position={[0, 1.0, 0]}>
+        <coneGeometry args={[0.28, 0.58, 32]} />
+        <meshStandardMaterial
+          color={rocketAccent}
+          metalness={0.5}
+          roughness={0.25}
+        />
+      </mesh>
+
+      {/* WINDOW */}
+      <mesh position={[0, 0.32, 0.3]}>
+        <sphereGeometry args={[0.12, 24, 24]} />
+        <meshStandardMaterial
+          color="#071b24"
+          emissive={isCyber ? "#0ea5e9" : "#165d66"}
+          emissiveIntensity={0.8}
+          metalness={0.65}
+          roughness={0.1}
+        />
+      </mesh>
+
+      {/* LEFT FIN */}
+      <mesh position={[-0.34, -0.45, 0]}>
+        <boxGeometry args={[0.16, 0.48, 0.14]} />
+        <meshStandardMaterial
+          color={rocketDark}
+          metalness={0.8}
+          roughness={0.2}
+        />
+      </mesh>
+
+      {/* RIGHT FIN */}
+      <mesh position={[0.34, -0.45, 0]}>
+        <boxGeometry args={[0.16, 0.48, 0.14]} />
+        <meshStandardMaterial
+          color={rocketDark}
+          metalness={0.8}
+          roughness={0.2}
+        />
+      </mesh>
+
+      {/* ENGINE */}
+      <mesh position={[0, -0.9, 0]}>
+        <cylinderGeometry args={[0.19, 0.27, 0.22, 24]} />
+        <meshStandardMaterial
+          color={rocketDark}
+          metalness={0.9}
+          roughness={0.18}
+        />
+      </mesh>
+
+      {/* FLAME */}
+      <mesh position={[0, -1.28, 0]}>
+        <coneGeometry args={[0.25, 0.8, 24]} />
+        <meshStandardMaterial
+          color="#ff9d55"
+          emissive="#ff4d22"
+          emissiveIntensity={4}
+        />
+      </mesh>
+
+    </group>
+  );
+}
+
+// ================= RESEARCH MODEL =================
+
+function Research3D({ mode = "light" }) {
+  const group = useRef();
+
+  const isLight = mode === "light";
+  const isCyber = mode === "cyber";
+
+  const mainColor = isCyber
+    ? "#38bdf8"
+    : isLight
+    ? "#168a68"
+    : "#6fae8d";
+
+  const orbitColor = isCyber
+    ? "#7c3aed"
+    : isLight
+    ? "#b56b3e"
+    : "#d58d5f";
+
+  const nodeColor = isCyber
+    ? "#60a5fa"
+    : isLight
+    ? "#168a68"
+    : "#91d5ad";
+
+  const groupMaterial = {
+    color: mainColor,
+    transparent: true,
+    opacity: 0.55,
+    wireframe: true,
+    metalness: 0.3,
+    roughness: 0.25,
+  };
+
+  useFrame((state, delta) => {
+    if (!group.current) return;
+
+    const t = state.clock.elapsedTime;
+
+    group.current.rotation.y += delta * 0.12;
+
+    group.current.rotation.x =
+      Math.sin(t * 0.4) * 0.055;
+  });
+
+  const nodes = [
+    [-1.15, 0.65, 0],
+    [1.15, 0.65, 0],
+    [-1.0, -0.65, 0.15],
+    [1.0, -0.65, -0.15],
+    [0, 1.15, 0],
+    [0, -1.15, 0],
+  ];
+
+  return (
+    <group
+      ref={group}
+      scale={1.05}
+    >
+
+      {/* CENTRAL MODEL */}
+      <mesh>
+        <icosahedronGeometry args={[1.0, 2]} />
+        <meshStandardMaterial {...groupMaterial} />
+      </mesh>
+
+      {/* SECOND INNER CORE */}
+      <mesh>
+        <icosahedronGeometry args={[0.62, 1]} />
+        <meshStandardMaterial
+          color={nodeColor}
+          transparent
+          opacity={0.2}
+          wireframe
+        />
+      </mesh>
+
+      {/* ORBIT 1 */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry
+          args={[1.35, 0.014, 12, 100]}
+        />
+        <meshStandardMaterial
+          color={orbitColor}
+          emissive={orbitColor}
+          emissiveIntensity={0.65}
+        />
+      </mesh>
+
+      {/* ORBIT 2 */}
+      <mesh rotation={[0.7, 0.35, 0.3]}>
+        <torusGeometry
+          args={[1.18, 0.01, 10, 80]}
+        />
+        <meshStandardMaterial
+          color={nodeColor}
+          emissive={nodeColor}
+          emissiveIntensity={0.7}
+        />
+      </mesh>
+
+      {/* NODES */}
+      {nodes.map((position, index) => (
+        <mesh
+          key={`research-node-${index}`}
+          position={position}
+        >
+          <sphereGeometry args={[0.085, 20, 20]} />
+
+          <meshStandardMaterial
+            color={nodeColor}
+            emissive={nodeColor}
+            emissiveIntensity={1.4}
+          />
+        </mesh>
+      ))}
+
+    </group>
+  );
+}
+// ================= 3D PORTFOLIO SEQUENCE =================
+
+function Portfolio3D({ mode = "light", playing = false }) {
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    if (!playing) {
+      setStage(0);
+      return;
+    }
+
+    // Start with robot
+    setStage(0);
+
+    // Robot → Rocket
+    const rocketTimer = window.setTimeout(() => {
+      setStage(1);
+    }, 3500);
+
+    // Rocket → Research
+    const researchTimer = window.setTimeout(() => {
+      setStage(2);
+    }, 8000);
+
+    return () => {
+      window.clearTimeout(rocketTimer);
+      window.clearTimeout(researchTimer);
+    };
+  }, [playing]);
+
+  const isLight = mode === "light";
+  const isCyber = mode === "cyber";
+
+  const sceneAccent = isCyber
+    ? "#38bdf8"
+    : isLight
+    ? "#168a68"
+    : "#72f0b7";
+
+  return (
+    <div className="portfolio3D">
+
+      {/* ================= TOP LABEL ================= */}
+
+      <div
+        className="portfolio3DHeader"
+        style={{
+          color: sceneAccent,
+        }}
+      >
+        <span>
+          {stage === 0 && "ROBOTICS / 01"}
+          {stage === 1 && "FLIGHT TEST / 02"}
+          {stage === 2 && "RESEARCH / 03"}
+        </span>
+
+        <span>
+          ROBOTICS · ORBIT · INQUIRY
+        </span>
+      </div>
+
+
+      {/* ================= 3D CANVAS ================= */}
+
+      <div className="portfolio3DScene">
+
+        <Canvas
+          camera={{
+            position: [0, 0.15, 5.8],
+            fov: 45,
+          }}
+          dpr={[1, 1.75]}
+          gl={{
+            antialias: true,
+            alpha: true,
+          }}
+        >
+
+          {/* Base illumination */}
+          <ambientLight
+            intensity={isLight ? 1.8 : 1.35}
+          />
+
+          {/* Main key light */}
+          <directionalLight
+            position={[4, 5, 5]}
+            intensity={isLight ? 3.4 : 2.7}
+          />
+
+          {/* Secondary light */}
+          <directionalLight
+            position={[-4, 2, 3]}
+            intensity={isLight ? 1.7 : 1.4}
+            color={sceneAccent}
+          />
+
+          {/* Accent point light */}
+          <pointLight
+            position={[-2.5, 1.5, 2]}
+            intensity={isLight ? 1.5 : 2}
+            color={sceneAccent}
+          />
+
+          {/* Subtle background stars */}
+          <Stars
+            radius={10}
+            depth={5}
+            count={180}
+            factor={1.1}
+            saturation={0}
+            fade
+          />
+
+
+          {/* ================= ROBOT ================= */}
+
+          <group visible={stage === 0}>
+            <Robot3D mode={mode} />
+          </group>
+
+
+          {/* ================= ROCKET ================= */}
+
+          <group visible={stage === 1}>
+            <Rocket3D
+              active={stage === 1}
+              mode={mode}
+            />
+          </group>
+
+
+          {/* ================= RESEARCH ================= */}
+
+          <group visible={stage === 2}>
+            <Research3D mode={mode} />
+          </group>
+
+
+          {/* Keep interaction but no zoom/pan */}
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            autoRotate={false}
+            minPolarAngle={Math.PI / 2.5}
+            maxPolarAngle={Math.PI / 1.7}
+          />
+
+        </Canvas>
+
+      </div>
+
+
+      {/* ================= CENTER LABEL ================= */}
+
+      <div
+        className="portfolio3DLabel"
+        style={{
+          borderColor: `${sceneAccent}55`,
+        }}
+      >
+        {stage === 0 && "ROBOT BUILD"}
+        {stage === 1 && "ORBIT / TAKEOFF"}
+        {stage === 2 && "RESEARCH MODEL"}
+      </div>
+
+
+      {/* ================= LEGEND ================= */}
+
+      <div className="portfolio3DLegend">
+
+        <span className={stage === 0 ? "active" : ""}>
+          ● AI MODELS
+        </span>
+
+        <span className={stage === 1 ? "active" : ""}>
+          ● FLIGHT SYSTEMS
+        </span>
+
+        <span className={stage === 2 ? "active" : ""}>
+          ● DATA SYSTEMS
+        </span>
+
+      </div>
+
+
+      {/* ================= CSS ================= */}
+
+      <style jsx>{`
+
+        .portfolio3D {
+          position: relative;
+          width: 100%;
+          height: 650px;
+          overflow: hidden;
+          transform: translateY(20px);
+          isolation: isolate;
+        }
+
+        .portfolio3DScene {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+        }
+
+        .portfolio3D canvas {
+          width: 100% !important;
+          height: 100% !important;
+          display: block;
+        }
+
+        .portfolio3DHeader {
+          position: absolute;
+          top: 20px;
+          left: 0;
+          right: 0;
+
+          z-index: 10;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          padding: 0 4px;
+
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+
+          pointer-events: none;
+
+          transition: color 0.35s ease;
+        }
+
+        .portfolio3DLabel {
+          position: absolute;
+
+          top: 50%;
+          left: 50%;
+
+          transform: translate(-50%, -50%);
+
+          z-index: 20;
+
+          padding: 7px 12px;
+
+          background: var(--panel);
+
+          border: 1px solid;
+
+          border-radius: 6px;
+
+          color: var(--text);
+
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+
+          white-space: nowrap;
+
+          backdrop-filter: blur(12px);
+
+          pointer-events: none;
+
+          box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .portfolio3DLegend {
+          position: absolute;
+
+          bottom: 18px;
+          left: 50%;
+
+          transform: translateX(-50%);
+
+          z-index: 20;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          gap: 18px;
+
+          color: var(--text-muted);
+
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+
+          white-space: nowrap;
+
+          pointer-events: none;
+        }
+
+        .portfolio3DLegend span {
+          opacity: 0.6;
+          transition:
+            opacity 0.3s ease,
+            color 0.3s ease,
+            transform 0.3s ease;
+        }
+
+        .portfolio3DLegend span.active {
+          color: var(--accent);
+          opacity: 1;
+          transform: translateY(-1px);
+        }
+
+        @media (max-width: 900px) {
+
+          .portfolio3D {
+            height: 520px;
+            transform: none;
+          }
+
+          .portfolio3DHeader {
+            top: 14px;
+            font-size: 8px;
+          }
+
+          .portfolio3DLegend {
+            bottom: 14px;
+            gap: 10px;
+            font-size: 7px;
+          }
+
+        }
+
+        @media (max-width: 560px) {
+
+          .portfolio3D {
+            height: 440px;
+          }
+
+          .portfolio3DHeader {
+            padding: 0 8px;
+            font-size: 7px;
+          }
+
+          .portfolio3DHeader span:last-child {
+            display: none;
+          }
+
+          .portfolio3DLabel {
+            font-size: 7px;
+            padding: 6px 9px;
+          }
+
+          .portfolio3DLegend {
+            gap: 8px;
+            font-size: 6px;
+          }
+
+        }
+
+      `}</style>
+
+    </div>
+  );
+}
 // ================= Hero.js (custom split-screen landing) =================
 function Hero({ mode, onSceneReady, playing }) {
   const name = "ANURAG KARMAKAR";
@@ -1468,9 +2542,12 @@ function Hero({ mode, onSceneReady, playing }) {
               </div>
             </div>
 
-            <aside className="heroResearchVisual" aria-label="Research visualization">
-              <ResearchScene mode={mode} onReady={onSceneReady} playing={playing} />
-            </aside>
+            <aside
+  className="heroResearchVisual"
+  aria-label="Interactive 3D portfolio visual"
+>
+  <Portfolio3D playing={playing} />
+</aside>
           </div>
 
           <div className="heroScrollCue">
@@ -2643,28 +3720,27 @@ function ResearchPreloader({ sceneReady, onComplete }) {
     };
   }, []);
 
-  const target = !paintReady
-    ? 14
-    : !fontsReady && !fallbackReady
-      ? 38
-      : !sceneReady && !fallbackReady
-        ? 72
-        : !minimumElapsed
-          ? 96
-          : 100;
   useEffect(() => {
-    let timer = 0;
-    const advance = () => {
-      const current = progressRef.current;
-      const next = Math.min(target, current + 1);
-      progressRef.current = next;
-      setProgress(next);
-      if (next >= target) window.clearInterval(timer);
-    };
+  let timer = 0;
 
-    if (progressRef.current < target) timer = window.setInterval(advance, 30);
-    return () => window.clearInterval(timer);
-  }, [target]);
+  const advance = () => {
+    const current = progressRef.current;
+
+    // Smooth continuous loading: 0 → 100
+    const next = Math.min(100, current + 1);
+
+    progressRef.current = next;
+    setProgress(next);
+
+    if (next >= 100) {
+      window.clearInterval(timer);
+    }
+  };
+
+  timer = window.setInterval(advance, 24);
+
+  return () => window.clearInterval(timer);
+}, []);
 
   useEffect(() => {
     if (progress < 100) return undefined;
