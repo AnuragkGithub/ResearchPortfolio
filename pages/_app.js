@@ -6,6 +6,13 @@ export default function App({ Component, pageProps }) {
   const [mode, setMode] = useState("light");
 
   useEffect(() => {
+    try {
+      const savedMode = window.localStorage.getItem("portfolio-theme");
+      if (["light", "dark", "cyber"].includes(savedMode)) setMode(savedMode);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
     document.body.classList.remove(
       "cyber",
       "dark",
@@ -13,6 +20,9 @@ export default function App({ Component, pageProps }) {
     );
 
     document.body.classList.add("app", mode);
+    try {
+      window.localStorage.setItem("portfolio-theme", mode);
+    } catch {}
   }, [mode]);
 
   return (

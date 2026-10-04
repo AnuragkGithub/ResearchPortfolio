@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Lenis from "lenis";
+import ResearchScene from "../components/ResearchScene";
 
 
 // ================= CustomCursor.js =================
@@ -480,19 +481,6 @@ function Navbar({ mode, setMode }) {
     }
   };
 
-  const nextMode = () => {
-    if (mode === "cyber") setMode("dark");
-    else if (mode === "dark") setMode("light");
-    else setMode("cyber");
-  };
-
-  const modeText =
-    mode === "cyber"
-      ? "Cyber Mode"
-      : mode === "dark"
-      ? "Dark Mode"
-      : "Light Mode";
-
   return (
     <nav className="navbar">
       <div className="clockWrap">
@@ -523,17 +511,41 @@ function Navbar({ mode, setMode }) {
         </div>
       </div>
 
+      <PortfolioViews />
+
       <div className="links">
         <button type="button" onClick={() => navigateTo("home")}>Overview</button>
         <button type="button" onClick={() => navigateTo("projects")}>Research</button>
         <button type="button" onClick={() => navigateTo("experience")}>Experience</button>
         <button type="button" onClick={() => navigateTo("tech")}>Methods</button>
         <button type="button" onClick={() => navigateTo("contact")}>Contact</button>
+        <details className="academicLinks">
+          <summary>Academic</summary>
+          <div className="academicMenu">
+            <span className="academicMenuLabel">RESEARCH PROFILES</span>
+            <a href="https://scholar.google.com/citations?user=XKO3qUEAAAAJ&hl=en" target="_blank" rel="noreferrer">Google Scholar</a>
+            <a href="https://www.researchgate.net/profile/Anurag-Karmakar" target="_blank" rel="noreferrer">ResearchGate</a>
+            <a href="https://adamas.academia.edu/ANURAGKarmakar" target="_blank" rel="noreferrer">Academia.edu</a>
+            <span className="academicMenuLabel academicMenuDivider">MORE</span>
+            <a href="/subjects-taught">Subjects Taught</a>
+            <a href="/notes">Notes</a>
+            <a href="/exploration">Exploration</a>
+          </div>
+        </details>
       </div>
 
-      <button type="button" className="modeButton" onClick={nextMode}>
-        {modeText}
-      </button>
+      <label className="modeControl">
+        <span>Appearance</span>
+        <select
+          aria-label="Choose appearance"
+          value={mode}
+          onChange={(event) => setMode(event.target.value)}
+        >
+          <option value="light">Field Notes</option>
+          <option value="dark">Night Lab</option>
+          <option value="cyber">Signal</option>
+        </select>
+      </label>
 
       <style jsx>{`
         .navbar {
@@ -686,21 +698,85 @@ function Navbar({ mode, setMode }) {
           transform: translateY(-1px);
         }
 
-        .modeButton {
-          padding: 9px 17px;
-          border-radius: 999px;
-          border: 1px solid var(--border);
-          background: var(--panel);
-          color: var(--text);
-          cursor: pointer;
-          white-space: nowrap;
-          transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        .academicLinks {
+          position: relative;
+          flex: 0 0 auto;
         }
 
-        .modeButton:hover {
-          transform: translateY(-1px);
+        .academicLinks summary {
+          padding: 6px 0;
+          color: var(--text-muted);
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
+          list-style: none;
+          white-space: nowrap;
+        }
+
+        .academicLinks summary::-webkit-details-marker { display: none; }
+        .academicLinks summary::after { content: " +"; color: var(--accent); }
+        .academicLinks[open] summary::after { content: " -"; }
+
+        .academicMenu {
+          position: absolute;
+          top: calc(100% + 12px);
+          right: 0;
+          z-index: 1001;
+          display: grid;
+          width: 220px;
+          padding: 12px;
+          border: 1px solid var(--border);
+          border-radius: 5px;
           background: var(--panel-strong);
-          border-color: var(--accent);
+          box-shadow: var(--shadow-soft);
+        }
+
+        .academicMenuLabel {
+          padding: 7px 8px 5px;
+          color: var(--accent);
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 1.2px;
+        }
+
+        .academicMenu a {
+          padding: 8px;
+          border-radius: 3px;
+          color: var(--text);
+          font-size: 12px;
+          text-decoration: none;
+        }
+
+        .academicMenu a:hover {
+          background: var(--surface-soft);
+          color: var(--accent);
+        }
+
+        .academicMenuDivider {
+          margin-top: 5px;
+          border-top: 1px solid var(--border);
+          padding-top: 11px;
+        }
+
+        .modeControl {
+          display: flex;
+          flex: 0 0 auto;
+          align-items: center;
+          gap: 8px;
+          color: var(--text-muted);
+          font-size: 10px;
+        }
+
+        .modeControl select {
+          max-width: 124px;
+          padding: 8px 25px 8px 9px;
+          border: 1px solid var(--border);
+          border-radius: 4px;
+          background: var(--panel-strong);
+          color: var(--text);
+          cursor: pointer;
+          font: inherit;
+          font-size: 11px;
         }
 
         @media (max-width: 850px) {
@@ -713,11 +789,15 @@ function Navbar({ mode, setMode }) {
           }
 
           .links {
-            gap: 15px;
+            gap: 10px;
           }
 
           .links button {
-            font-size: 0.84rem;
+            font-size: 0.76rem;
+          }
+
+          .academicLinks summary {
+            font-size: 0.76rem;
           }
         }
 
@@ -738,9 +818,11 @@ function Navbar({ mode, setMode }) {
           }
 
           .links button {
-            font-size: 0.78rem;
+            font-size: 0.65rem;
           }
 
+
+          .academicLinks summary { font-size: 0.65rem; }
           .clockButton {
             min-height: 34px;
             padding: 6px 8px;
@@ -750,9 +832,19 @@ function Navbar({ mode, setMode }) {
             font-size: 0.88rem;
           }
 
-          .modeButton {
-            padding: 8px 11px;
-            font-size: 0.72rem;
+          .modeControl span {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            clip-path: inset(50%);
+          }
+
+          .modeControl select {
+            max-width: 112px;
+            padding: 7px 22px 7px 7px;
+            font-size: 10px;
           }
 
           .timezoneMenu {
@@ -777,18 +869,17 @@ function Experience() {
     cards.forEach((card) => {
       gsap.fromTo(
         card,
-        { opacity: 0, y: 70, scale: 0.97 },
+        { autoAlpha: 0, y: 24 },
         {
-          opacity: 1,
+          autoAlpha: 1,
           y: 0,
-          scale: 1,
-          duration: 1,
+          duration: 0.45,
           ease: "power3.out",
           scrollTrigger: {
             trigger: card,
-            start: "top 88%",
-            end: "top 55%",
-            scrub: 1,
+            start: "top 92%",
+            toggleActions: "play none none none",
+            once: true,
           },
         }
       );
@@ -818,9 +909,9 @@ function Experience() {
           <div className="expCard">
             <div className="jobMeta">
               <span className="company">STMicroelectronics</span>
-              <span className="period">July 2025 – Present</span>
+              <span className="period">July 2025 – June 2026</span>
             </div>
-            <h3>Project Trainee (Software Engineer Intern)</h3>
+            <h3>Software Engineer</h3>
             <p className="location">Greater Noida, India</p>
             <div className="line" />
             <ul>
@@ -1158,7 +1249,7 @@ function PortfolioViews() {
   }, []);
 
   return (
-    <section className="portfolioViews" aria-label="Portfolio page views">
+    <div className="portfolioViews" role="group" aria-label="Portfolio reach">
       <div className="portfolioViewsInner">
         <span className="portfolioViewsLabel">PORTFOLIO REACH</span>
         <strong className="portfolioViewsCount" aria-live="polite">
@@ -1173,7 +1264,7 @@ function PortfolioViews() {
           {status === "unavailable" ? "Page-view count is unavailable." : ""}
         </span>
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -1313,35 +1404,8 @@ function Contact() {
 
 
 // ================= Hero.js (custom split-screen landing) =================
-function Hero() {
+function Hero({ mode, onSceneReady, playing }) {
   const name = "ANURAG KARMAKAR";
-  const [activePhoto, setActivePhoto] = useState(0);
-
-  const demoPhotos = [
-    {
-      src: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=85",
-      alt: "Close-up of a circuit board used as a technology portfolio demo image",
-      label: "Research & technology",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=85",
-      alt: "People collaborating around computers",
-      label: "Collaborative inquiry",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=85",
-      alt: "Cybersecurity and digital technology visual",
-      label: "Applied AI & security",
-    },
-  ];
-
-  const nextPhoto = () => {
-    setActivePhoto((current) => (current + 1) % demoPhotos.length);
-  };
-
-  const previousPhoto = () => {
-    setActivePhoto((current) => (current - 1 + demoPhotos.length) % demoPhotos.length);
-  };
 
   return (
     <>
@@ -1361,19 +1425,8 @@ function Hero() {
                 </div>
 
                 <h1 className="name-container" aria-label={name}>
-                  {name.split(" ").map((word, wordIndex) => (
-                    <span
-                      key={word}
-                      className={`name-word ${wordIndex === 1 ? "name-surname" : ""}`}
-                      aria-hidden="true"
-                    >
-                      {word.split("").map((letter, index) => (
-                        <span className="name-letter" key={`${letter}-${index}`}>
-                          {letter}
-                        </span>
-                      ))}
-                    </span>
-                  ))}
+                  <span className="name-word">ANURAG</span>
+                  <span className="name-word name-surname">KARMAKAR</span>
                 </h1>
 
                 <div className="heroAbout">
@@ -1415,54 +1468,8 @@ function Hero() {
               </div>
             </div>
 
-            <aside
-              className="heroPhotoGallery"
-              aria-label="Portfolio photo gallery"
-            >
-              <div className="photoGalleryHeading">
-                <span className="photoGalleryEyebrow">Field notes / 01</span>
-                <span className="photoGalleryHint">Selected interests</span>
-              </div>
-
-              <div className="photoStack">
-                {demoPhotos.map((photo, index) => {
-                  const offset = (index - activePhoto + demoPhotos.length) % demoPhotos.length;
-                  return (
-                    <button
-                      type="button"
-                      className={`photoCard photoCard-${offset} ${index === activePhoto ? "photoCardActive" : ""}`}
-                      key={photo.src}
-                      onClick={() => setActivePhoto(index)}
-                      aria-label={`Show ${photo.label}`}
-                    >
-                      <img src={photo.src} alt={photo.alt} draggable="false" />
-                      <span className="photoCardOverlay">
-                        <span>{photo.label}</span>
-                        <span className="photoCardArrow">↗</span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="photoGalleryControls">
-                <div className="photoGalleryDots" aria-label="Choose a photo">
-                  {demoPhotos.map((photo, index) => (
-                    <button
-                      key={photo.src}
-                      type="button"
-                      className={index === activePhoto ? "photoDot active" : "photoDot"}
-                      onClick={() => setActivePhoto(index)}
-                      aria-label={`Show photo ${index + 1}`}
-                      aria-pressed={index === activePhoto}
-                    />
-                  ))}
-                </div>
-                <div className="photoGalleryArrows">
-                  <button type="button" onClick={previousPhoto} aria-label="Previous photo">←</button>
-                  <button type="button" onClick={nextPhoto} aria-label="Next photo">→</button>
-                </div>
-              </div>
+            <aside className="heroResearchVisual" aria-label="Research visualization">
+              <ResearchScene mode={mode} onReady={onSceneReady} playing={playing} />
             </aside>
           </div>
 
@@ -1572,7 +1579,7 @@ function Hero() {
           font-size: 15px;
         }
 
-        .heroSplitStage.is-centered .heroPhotoGallery {
+        .heroSplitStage.is-centered .heroResearchVisual {
           flex-basis: 0 !important;
           width: 0;
           opacity: 0;
@@ -1624,14 +1631,13 @@ function Hero() {
 
         .name-container {
           display: flex;
-          flex-wrap: wrap;
-          gap: 0.15em;
-          align-items: center;
+          flex-direction: column;
+          align-items: flex-start;
           justify-content: flex-start;
           width: 100%;
           margin: 0 0 25px;
           font-family: var(--font-sans);
-          font-size: clamp(2.5rem, 4.4vw, 5.4rem);
+          font-size: 74px;
           line-height: 1.02;
           font-weight: 900;
           letter-spacing: 0;
@@ -1639,29 +1645,12 @@ function Hero() {
         }
 
         .name-word {
-          display: inline-flex;
+          display: block;
+          max-width: 100%;
           white-space: nowrap;
         }
 
-        .name-letter {
-          display: inline-block;
-          transform-origin: center bottom;
-          transition: color 0.25s ease, text-shadow 0.25s ease;
-        }
-
         .name-surname { color: var(--accent); }
-
-        .name-letter:hover {
-          animation: heroLetterJump 0.55s ease;
-          color: var(--accent);
-          text-shadow: 0 0 18px var(--accent);
-        }
-
-        @keyframes heroLetterJump {
-          0%, 100% { transform: translateY(0) scale(1); }
-          35% { transform: translateY(-12px) scale(1.08); }
-          65% { transform: translateY(0) scale(0.98); }
-        }
 
         .heroAbout {
           width: 100%;
@@ -1767,7 +1756,7 @@ function Hero() {
         .primary-btn:hover, .secondary-btn:hover { transform: translateY(-3px); }
         .secondary-btn:hover { border-color: var(--accent); background: var(--panel-strong); }
 
-        .heroPhotoGallery {
+        .heroResearchVisual {
           min-width: 0;
           flex-shrink: 0;
           position: relative;
@@ -1778,164 +1767,6 @@ function Hero() {
           transition: flex-basis 700ms cubic-bezier(0.22, 1, 0.36, 1),
             opacity 600ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
           will-change: flex-basis, opacity, transform;
-        }
-
-        .photoGalleryHeading {
-          width: min(100%, 540px);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 18px;
-          color: var(--text-muted);
-          font-size: 11px;
-          letter-spacing: 1.4px;
-          text-transform: uppercase;
-        }
-
-        .photoGalleryEyebrow { font-weight: 800; color: var(--text); }
-        .photoGalleryHint { opacity: 0.7; white-space: nowrap; }
-
-        .photoStack {
-          position: relative;
-          width: min(100%, 540px);
-          height: min(55vh, 510px);
-          min-height: 340px;
-          perspective: 1200px;
-        }
-
-        .photoCard {
-          position: absolute;
-          inset: 0;
-          width: 82%;
-          height: 88%;
-          padding: 0;
-          overflow: hidden;
-          border: 1px solid var(--border);
-          border-radius: 14px;
-          background: var(--panel);
-          box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
-          cursor: pointer;
-          transform-origin: center center;
-          transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 500ms ease, filter 500ms ease, box-shadow 500ms ease;
-        }
-
-        .photoCard img {
-          display: block;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          user-select: none;
-          transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
-        }
-
-        .photoCard-0 {
-          z-index: 3;
-          left: 9%;
-          top: 5%;
-          transform: rotate(-3deg) translateY(0);
-        }
-
-        .photoCard-1 {
-          z-index: 2;
-          left: 14%;
-          top: 1%;
-          transform: rotate(7deg) translate(12px, 6px) scale(0.94);
-          filter: saturate(0.75) brightness(0.8);
-        }
-
-        .photoCard-2 {
-          z-index: 1;
-          left: 4%;
-          top: 9%;
-          transform: rotate(-10deg) translate(-12px, 12px) scale(0.88);
-          filter: saturate(0.65) brightness(0.65);
-        }
-
-        .photoCard:hover, .photoCardActive:hover {
-          z-index: 5;
-          transform: rotate(0deg) translateY(-8px) scale(1.02);
-          filter: none;
-          box-shadow: 0 32px 90px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent);
-        }
-
-        .photoCard:hover img { transform: scale(1.06); }
-
-        .photoCardOverlay {
-          position: absolute;
-          inset: auto 0 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 12px;
-          padding: 42px 20px 18px;
-          color: white;
-          text-align: left;
-          font-size: 13px;
-          font-weight: 800;
-          background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
-        }
-
-        .photoCardArrow { font-size: 22px; }
-
-        .photoGalleryControls {
-          width: min(100%, 540px);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 10px;
-        }
-
-        .photoGalleryDots, .photoGalleryArrows {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .photoDot {
-          width: 8px;
-          height: 8px;
-          padding: 0;
-          border: 0;
-          border-radius: 99px;
-          background: var(--text-muted);
-          opacity: 0.4;
-          cursor: pointer;
-          transition: width 250ms ease, opacity 250ms ease, background 250ms ease;
-        }
-
-        .photoDot.active {
-          width: 26px;
-          opacity: 1;
-          background: var(--accent);
-        }
-
-        .photoGalleryArrows button {
-          width: 38px;
-          height: 38px;
-          border: 1px solid var(--border);
-          border-radius: 50%;
-          background: var(--panel);
-          color: var(--text);
-          font-size: 20px;
-          cursor: pointer;
-          transition: transform 250ms ease, border-color 250ms ease;
-        }
-
-        .photoGalleryArrows button:hover {
-          transform: translateY(-2px);
-          border-color: var(--accent);
-        }
-
-        .photoReplaceNote {
-          width: min(100%, 540px);
-          margin: 10px 0 0;
-          color: var(--text-muted);
-          opacity: 0.62;
-          font-size: 10px;
-          line-height: 1.4;
-          text-align: center;
         }
 
         .heroScrollCue {
@@ -1978,17 +1809,16 @@ function Hero() {
           .heroSplitPin { padding-left: 4vw; padding-right: 4vw; }
           .heroSplitLayout { gap: 2vw; }
           .heroSplitCopy { flex-basis: 58% !important; }
-          .heroPhotoGallery { flex-basis: 42% !important; }
-          .name-container { font-size: clamp(2.3rem, 4.5vw, 4rem); }
+          .heroResearchVisual { flex-basis: 42% !important; }
+          .name-container { font-size: 56px; }
           .heroAbout { padding: 18px 20px; }
           .recruiter-points { padding: 17px 19px; gap: 10px; }
           .bullet-point p { font-size: 0.82rem; }
-          .photoStack { min-height: 300px; }
         }
 
         @media (max-width: 1100px) {
           .heroSplitStage.is-centered .name-container {
-            font-size: clamp(2rem, 5vw, 4.2rem);
+            font-size: 56px;
           }
           .heroSplitStage.is-centered .heroSplitInner {
             max-width: 800px;
@@ -2005,13 +1835,13 @@ function Hero() {
             overflow: hidden;
           }
           .heroSplitLayout { display: flex; flex-direction: column; gap: 38px; }
-          .heroSplitCopy, .heroPhotoGallery {
+          .heroSplitCopy, .heroResearchVisual {
             flex-basis: auto !important;
             width: 100%;
             transform: none !important;
             opacity: 1 !important;
           }
-          .heroSplitStage.is-centered .heroPhotoGallery {
+          .heroSplitStage.is-centered .heroResearchVisual {
             flex-basis: auto !important;
             width: 100%;
             opacity: 1;
@@ -2025,7 +1855,7 @@ function Hero() {
           .heroSplitStage.is-centered .name-container {
             justify-content: flex-start;
             text-align: left;
-            font-size: clamp(2rem, 8vw, 3.6rem);
+            font-size: 48px;
             white-space: normal;
             flex-wrap: wrap;
           }
@@ -2037,10 +1867,8 @@ function Hero() {
             max-width: 100%;
           }
           .heroSplitInner { max-width: 620px; }
-          .name-container { font-size: clamp(2.2rem, 9vw, 4rem); }
-          .heroPhotoGallery { max-width: 600px; }
-          .photoStack { height: 420px; min-height: 300px; }
-          .photoCard { width: 85%; height: 88%; }
+          .name-container { font-size: 48px; }
+          .heroResearchVisual { max-width: 600px; }
           .heroScrollCue { display: none; }
         }
 
@@ -2053,12 +1881,10 @@ function Hero() {
           .bullet-point p { font-size: 0.8rem; }
           .heroSplitButtons { width: 100%; }
           .heroSplitButtons button { flex: 1 1 100%; }
-          .photoStack { height: 340px; min-height: 280px; }
-          .photoGalleryHeading { font-size: 9px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .heroSplitCopy, .heroPhotoGallery, .photoCard, .photoCard img,
+          .heroSplitCopy, .heroResearchVisual,
           .heroScrollCue, .scrollCueLine {
             transition: none !important;
             animation: none !important;
@@ -2773,7 +2599,158 @@ function useAnimations() {
 }
 
 
-export default function Home({ mode = "cyber", setMode = () => {} }) {
+function ResearchPreloader({ sceneReady, onComplete }) {
+  const [progress, setProgress] = useState(0);
+  const [paintReady, setPaintReady] = useState(false);
+  const [fontsReady, setFontsReady] = useState(false);
+  const [minimumElapsed, setMinimumElapsed] = useState(false);
+  const [fallbackReady, setFallbackReady] = useState(false);
+  const progressRef = useRef(0);
+
+  useEffect(() => {
+    let active = true;
+    let firstFrame = 0;
+    let secondFrame = 0;
+    const minimumTimer = window.setTimeout(() => setMinimumElapsed(true), 2100);
+    const fallbackTimer = window.setTimeout(() => {
+      setFallbackReady(true);
+      setPaintReady(true);
+      setFontsReady(true);
+    }, 5000);
+
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        if (active) setPaintReady(true);
+      });
+    });
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (active) setFontsReady(true);
+      }).catch(() => {
+        if (active) setFontsReady(true);
+      });
+    } else {
+      setFontsReady(true);
+    }
+
+    return () => {
+      active = false;
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+      window.clearTimeout(minimumTimer);
+      window.clearTimeout(fallbackTimer);
+    };
+  }, []);
+
+  const target = !paintReady
+    ? 14
+    : !fontsReady && !fallbackReady
+      ? 38
+      : !sceneReady && !fallbackReady
+        ? 72
+        : !minimumElapsed
+          ? 96
+          : 100;
+  useEffect(() => {
+    let timer = 0;
+    const advance = () => {
+      const current = progressRef.current;
+      const next = Math.min(target, current + 1);
+      progressRef.current = next;
+      setProgress(next);
+      if (next >= target) window.clearInterval(timer);
+    };
+
+    if (progressRef.current < target) timer = window.setInterval(advance, 30);
+    return () => window.clearInterval(timer);
+  }, [target]);
+
+  useEffect(() => {
+    if (progress < 100) return undefined;
+    const timer = window.setTimeout(onComplete, 380);
+    return () => window.clearTimeout(timer);
+  }, [progress, onComplete]);
+
+  const stage = progress < 18
+    ? "WAKING THE LAB"
+    : progress < 42
+      ? "ALIGNING FIELD NOTES"
+      : progress < 78
+        ? "BUILDING THE RESEARCH SCENE"
+        : progress < 98
+          ? "CHECKING SIGNALS"
+          : "READY TO EXPLORE";
+
+  return (
+    <div className="researchLoader" aria-busy={progress < 100}>
+      <div className="researchLoaderFrame">
+        <header className="researchLoaderHeader">
+          <span>AK <i>/</i> RESEARCH PORTFOLIO</span>
+          <span>INITIALIZATION / 01</span>
+        </header>
+
+        <main className="researchLoaderMain">
+          <div className="loaderInstrument" aria-hidden="true">
+            <span className="loaderOrbit loaderOrbitOne" />
+            <span className="loaderOrbit loaderOrbitTwo" />
+            <span className="loaderAxis loaderAxisHorizontal" />
+            <span className="loaderAxis loaderAxisVertical" />
+            <span className="loaderInstrumentCore">AK</span>
+            <i className="loaderSignal loaderSignalOne" />
+            <i className="loaderSignal loaderSignalTwo" />
+            <i className="loaderSignal loaderSignalThree" />
+          </div>
+
+          <p className="researchLoaderEyebrow">A FIELD IN MOTION</p>
+          <h1>Entering the<br />research field.</h1>
+          <p className="researchLoaderDescription">
+            Preparing the models, evidence, and ideas behind the work.
+          </p>
+
+          <div className="researchLoaderReadout">
+            <span aria-live="polite">{stage}</span>
+            <span
+              className="researchLoaderPercent"
+              role="progressbar"
+              aria-label="Portfolio loading progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={Math.floor(progress)}
+            >
+              {Math.floor(progress).toString().padStart(2, "0")}%
+            </span>
+          </div>
+          <div className="researchLoaderTrack" aria-hidden="true">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+        </main>
+
+        <footer className="researchLoaderFooter">
+          <span>APPLIED AI / CYBERSECURITY / DATA SYSTEMS</span>
+          <span>ESTABLISHING CONNECTION</span>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+
+export default function Home({ mode = "light", setMode = () => {} }) {
+  const [sceneReady, setSceneReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const onSceneReady = useCallback(() => setSceneReady(true), []);
+  const onLoadingComplete = useCallback(() => setLoading(false), []);
+
+  useEffect(() => {
+    if (!loading) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [loading]);
+
   useEffect(() => {
     // Always open a fresh reload at Home rather than restoring an old hash.
     const hash = window.location.hash;
@@ -2785,18 +2762,22 @@ export default function Home({ mode = "cyber", setMode = () => {} }) {
   return (
     <div className={`app ${mode}`}>
       <style jsx global>{":root {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #090a12 100%);\n  --panel: rgba(255, 255, 255, 0.06);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --surface: rgba(255, 255, 255, 0.06);\n  --surface-soft: rgba(255, 255, 255, 0.03);\n  --glass: rgba(255, 255, 255, 0.08);\n  --border: rgba(255, 255, 255, 0.1);\n  --border-strong: rgba(255, 255, 255, 0.16);\n  --text: #eef2ff;\n  --text-muted: rgba(238, 242, 255, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #a855f7;\n  --accent-soft: #83c5fd;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.45);\n  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.18);\n  --stroke: rgba(255, 255, 255, 0.06);\n  --card-bg: rgba(255, 255, 255, 0.04);\n  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.18);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: var(--text-muted);\n  --tag-bg: rgba(255, 255, 255, 0.08);\n  --tag-text: var(--text-muted);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  width: 100%;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  width: 100%;\n  overflow-x: clip;\n  min-height: 100vh;\n  font-family: var(--font-sans);\n  color: var(--text);\n  background: var(--bg);\n  transition: background 0.35s ease, color 0.35s ease;\n}\n\nbody.app {\n  background: var(--bg);\n  color: var(--text);\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n}\n\nbutton {\n  font: inherit;\n}\n\nimg,\nvideo {\n  max-width: 100%;\n  display: block;\n}\n\n#__next {\n  min-height: 100vh;\n  overflow-x: clip;\n}\n\n.section-padding {\n  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);\n}\n\n@media (max-width: 640px) {\n  .section-padding {\n    padding: 4.5rem 1rem;\n  }\n}\n\nbody.app.cyber {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);\n  --panel: rgba(255, 255, 255, 0.05);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --text: #f3f4ff;\n  --text-muted: rgba(243, 244, 255, 0.72);\n  --border: rgba(56, 189, 248, 0.28);\n  --accent: #38bdf8;\n  --accent-strong: #c084fc;\n  --accent-soft: #0ea5e9;\n  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.28);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.18);\n  --accent-secondary: rgba(243, 244, 255, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(243, 244, 255, 0.72);\n}\n\nbody.app.dark {\n  --bg: #05060e;\n  --bg-gradient: linear-gradient(135deg, #05060e 0%, #0d1322 100%);\n  --panel: rgba(15, 23, 42, 0.78);\n  --panel-strong: rgba(255, 255, 255, 0.08);\n  --surface: rgba(15, 23, 42, 0.62);\n  --surface-soft: rgba(15, 23, 42, 0.35);\n  --glass: rgba(255, 255, 255, 0.06);\n  --border: rgba(255, 255, 255, 0.12);\n  --text: #f8fafc;\n  --text-muted: rgba(248, 250, 252, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #7c3aed;\n  --accent-soft: #60a5fa;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.22);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: rgba(248, 250, 252, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(248, 250, 252, 0.72);\n}\n\nbody.app.light {\n  --bg: #f4f6fb;\n  --bg-gradient: linear-gradient(135deg, #edf2ff 0%, #e2e8f0 100%);\n  --panel: rgba(255, 255, 255, 0.94);\n  --panel-strong: rgba(255, 255, 255, 0.98);\n  --text: #0f172a;\n  --text-muted: rgba(15, 23, 42, 0.68);\n  --border: rgba(15, 23, 42, 0.12);\n  --accent: #2563eb;\n  --accent-strong: #475569;\n  --accent-soft: #94a3b8;\n  --shadow: 0 35px 100px rgba(15, 23, 42, 0.18);\n  --card-bg: rgba(255, 255, 255, 0.95);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(37, 99, 235, 0.18);\n  --accent-glow: 0 12px 30px rgba(37, 99, 235, 0.14);\n  --accent-secondary: rgba(15, 23, 42, 0.72);\n  --tag-bg: rgba(15, 23, 42, 0.08);\n  --tag-text: rgba(15, 23, 42, 0.72);\n}\n\nbody.app.light a,\nbody.app.light button,\nbody.app.light .logo {\n  color: #111111 !important;\n}\n\nbody.app.light .navbar {\n  background: rgba(255, 255, 255, 0.92);\n  border-color: rgba(0, 0, 0, 0.08);\n}\n\nbody.app.dark .navbar {\n  background: rgba(10, 10, 15, 0.95);\n  border-color: rgba(255, 255, 255, 0.08);\n}\n\nbody.app.cyber .navbar {\n  background: rgba(7, 7, 10, 0.92);\n  border-color: rgba(56, 189, 248, 0.18);\n}\n"}</style>
-      <CustomCursor />
-      <Navbar mode={mode} setMode={setMode} />
-      <main>
-        <Hero mode={mode} />
-        <About />
-        <Experience mode={mode} />
-        <ProjectShowcase />
-        <TechStack />
-        <DailyThought />
-        <PortfolioViews />
-        <Contact />
-      </main>
+      <div className="portfolioAppContent" aria-hidden={loading}>
+        <CustomCursor />
+        <Navbar mode={mode} setMode={setMode} />
+        <main>
+          <Hero mode={mode} onSceneReady={onSceneReady} playing={!loading} />
+          <About />
+          <Experience mode={mode} />
+          <ProjectShowcase />
+          <TechStack />
+          <DailyThought />
+          <Contact />
+        </main>
+      </div>
+      {loading && (
+        <ResearchPreloader sceneReady={sceneReady} onComplete={onLoadingComplete} />
+      )}
     </div>
   );
 }
