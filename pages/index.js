@@ -1403,714 +1403,484 @@ function Contact() {
   );
 }
 // ================= 3D Hero Visual =================
-// ================= FREE 3D ROBOT =================
-
-// ================= HUMANOID ROBOT =================
+// ================= HUMANOID ROBOT (Ultra-Realistic) =================
 
 function Robot3D({ mode = "light" }) {
   const robot = useRef();
+  const leftArmRef = useRef();
+  const rightArmRef = useRef();
+  const leftLegRef = useRef();
+  const rightLegRef = useRef();
+  const headRef = useRef();
+  const reactorRef = useRef();
+  const eyeLeftRef = useRef();
+  const eyeRightRef = useRef();
 
   const isLight = mode === "light";
   const isCyber = mode === "cyber";
-  const isDark = mode === "dark";
 
   const palette = {
-    body: isLight
-      ? "#b8c2bf"
-      : isCyber
-      ? "#26353b"
-      : "#27312f",
-
-    bodyDark: isLight
-      ? "#68736f"
-      : isCyber
-      ? "#101c22"
-      : "#0c1312",
-
-    silver: isLight
-      ? "#e1e6e4"
-      : isCyber
-      ? "#8299a3"
-      : "#8a9692",
-
-    joint: isLight
-      ? "#7f8b87"
-      : isCyber
-      ? "#526c77"
-      : "#46514e",
-
-    visor: isLight
-      ? "#203532"
-      : isCyber
-      ? "#06151d"
-      : "#061311",
-
-    glow: isLight
-      ? "#168a68"
-      : isCyber
-      ? "#38bdf8"
-      : "#72f0b7",
-
-    glowEmissive: isLight
-      ? "#0c624c"
-      : isCyber
-      ? "#0ea5e9"
-      : "#35d99a",
+    body:      isCyber ? "#1e2d35" : isLight ? "#cdd4d1" : "#2a3530",
+    bodyHi:    isCyber ? "#2d4452" : isLight ? "#e8edeb" : "#3d4f49",
+    bodyDark:  isCyber ? "#0b161c" : isLight ? "#5e6a67" : "#111a17",
+    silver:    isCyber ? "#6b8fa3" : isLight ? "#dce3e1" : "#7a8d89",
+    joint:     isCyber ? "#384e5c" : isLight ? "#8e9d98" : "#343f3c",
+    visor:     isCyber ? "#040e14" : isLight ? "#1a2e2b" : "#050d0b",
+    glow:      isCyber ? "#38bdf8" : isLight ? "#16c381" : "#56e8a4",
+    glowEmit:  isCyber ? "#0ea5e9" : isLight ? "#0aaa6e" : "#2ad483",
+    accent2:   isCyber ? "#f59e0b" : isLight ? "#e07b3b" : "#d4793a",
+    accent2Em: isCyber ? "#d97706" : isLight ? "#c06430" : "#b55e28",
   };
 
-  const metal = {
-    color: palette.body,
-    metalness: 0.82,
-    roughness: isLight ? 0.3 : 0.2,
-  };
-
-  const darkMetal = {
-    color: palette.bodyDark,
-    metalness: 0.92,
-    roughness: 0.17,
-  };
-
-  const silver = {
-    color: palette.silver,
-    metalness: 0.92,
-    roughness: 0.2,
-  };
-
-  const joint = {
-    color: palette.joint,
-    metalness: 0.9,
-    roughness: 0.24,
-  };
-
-  const glow = {
-    color: palette.glow,
-    emissive: palette.glowEmissive,
-    emissiveIntensity: isLight ? 1.4 : 2.8,
-    metalness: 0.25,
-    roughness: 0.14,
-  };
+  const metal    = { color: palette.body,     metalness: 0.86, roughness: isLight ? 0.28 : 0.18 };
+  const metalHi  = { color: palette.bodyHi,   metalness: 0.78, roughness: 0.22 };
+  const darkMetal= { color: palette.bodyDark, metalness: 0.94, roughness: 0.14 };
+  const silver   = { color: palette.silver,   metalness: 0.94, roughness: 0.16 };
+  const joint    = { color: palette.joint,    metalness: 0.88, roughness: 0.26 };
+  const glow     = { color: palette.glow, emissive: palette.glowEmit, emissiveIntensity: isCyber ? 3.2 : isLight ? 1.8 : 2.6, metalness: 0.2, roughness: 0.1 };
+  const glow2    = { color: palette.accent2, emissive: palette.accent2Em, emissiveIntensity: isCyber ? 2.5 : isLight ? 1.5 : 2.2, metalness: 0.2, roughness: 0.1 };
+  const visorMat = { color: palette.visor, metalness: 0.92, roughness: 0.04, emissive: palette.glowEmit, emissiveIntensity: isCyber ? 0.5 : 0.25 };
 
   useFrame((state, delta) => {
     if (!robot.current) return;
-
     const t = state.clock.elapsedTime;
-
-    robot.current.rotation.y += delta * 0.11;
-
-    robot.current.position.y =
-      Math.sin(t * 1.25) * 0.035;
-
-    robot.current.rotation.z =
-      Math.sin(t * 0.65) * 0.012;
+    robot.current.rotation.y += delta * 0.13;
+    robot.current.position.y = Math.sin(t * 1.1) * 0.04;
+    robot.current.rotation.z = Math.sin(t * 0.55) * 0.01;
+    if (headRef.current) {
+      headRef.current.rotation.y = Math.sin(t * 0.38) * 0.28;
+      headRef.current.rotation.x = Math.sin(t * 0.52) * 0.06;
+    }
+    if (leftArmRef.current)  leftArmRef.current.rotation.x  =  Math.sin(t * 1.1) * 0.18;
+    if (rightArmRef.current) rightArmRef.current.rotation.x  = -Math.sin(t * 1.1) * 0.18;
+    if (leftLegRef.current)  leftLegRef.current.rotation.x  =  Math.sin(t * 0.7) * 0.06;
+    if (rightLegRef.current) rightLegRef.current.rotation.x  = -Math.sin(t * 0.7) * 0.06;
+    if (reactorRef.current) reactorRef.current.scale.setScalar(1 + Math.sin(t * 4.5) * 0.14);
+    if (eyeLeftRef.current && eyeRightRef.current) {
+      const blink = Math.sin(t * 6.8) > 0.97 ? 0.1 : 1;
+      eyeLeftRef.current.scale.y  = blink;
+      eyeRightRef.current.scale.y = blink;
+    }
   });
 
   return (
-    <group
-      ref={robot}
-      position={[0, -0.82, 0]}
-      scale={0.72}
-    >
+    <group ref={robot} position={[0, -1.05, 0]} scale={0.78}>
 
-      {/* ================= HEAD ================= */}
+      {/* PELVIS */}
+      <mesh position={[0, -0.12, 0]}><boxGeometry args={[0.62, 0.22, 0.38]} /><meshStandardMaterial {...metal} /></mesh>
+      <mesh position={[0, -0.12, 0.22]}><boxGeometry args={[0.38, 0.16, 0.05]} /><meshStandardMaterial {...darkMetal} /></mesh>
 
-      <group position={[0, 1.88, 0]}>
+      {/* WAIST */}
+      <mesh position={[0, 0.07, 0]}><cylinderGeometry args={[0.22, 0.3, 0.28, 28]} /><meshStandardMaterial {...joint} /></mesh>
+      <mesh position={[0, 0.07, 0.22]}><boxGeometry args={[0.28, 0.045, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
 
-        {/* Neck */}
-        <mesh position={[0, -0.43, 0]}>
-          <cylinderGeometry args={[0.15, 0.19, 0.25, 24]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        {/* Head shell */}
-        <mesh>
-          <sphereGeometry args={[0.45, 32, 24]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        {/* Face visor */}
-        <mesh position={[0, 0.01, 0.405]}>
-          <sphereGeometry
-            args={[
-              0.345,
-              32,
-              20,
-              0,
-              Math.PI * 2,
-              0,
-              Math.PI * 0.55,
-            ]}
-          />
-
-          <meshStandardMaterial
-            color={palette.visor}
-            metalness={0.8}
-            roughness={0.08}
-            emissive={palette.glowEmissive}
-            emissiveIntensity={isLight ? 0.15 : 0.35}
-          />
-        </mesh>
-
-        {/* Eye strips */}
-        <mesh position={[-0.135, 0.06, 0.715]}>
-          <boxGeometry args={[0.13, 0.035, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        <mesh position={[0.135, 0.06, 0.715]}>
-          <boxGeometry args={[0.13, 0.035, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        {/* Head side modules */}
-        <mesh position={[-0.46, 0, 0]}>
-          <cylinderGeometry args={[0.105, 0.105, 0.15, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0.46, 0, 0]}>
-          <cylinderGeometry args={[0.105, 0.105, 0.15, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-      </group>
-
-
-      {/* ================= CHEST ================= */}
-
-      <group position={[0, 0.68, 0]}>
-
-        {/* Main torso */}
-        <mesh>
-          <boxGeometry args={[0.86, 0.98, 0.46]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        {/* Upper chest armor */}
-        <mesh position={[0, 0.14, 0.245]}>
-          <boxGeometry args={[0.68, 0.5, 0.07]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        {/* Shoulder chest plates */}
-        <mesh position={[-0.27, 0.27, 0.26]}>
-          <boxGeometry args={[0.17, 0.12, 0.05]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0.27, 0.27, 0.26]}>
-          <boxGeometry args={[0.17, 0.12, 0.05]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        {/* Central reactor */}
-        <mesh position={[0, 0.09, 0.3]}>
-          <cylinderGeometry args={[0.115, 0.115, 0.045, 32]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        {/* Chest light bars */}
-        <mesh position={[-0.24, 0.29, 0.3]}>
-          <boxGeometry args={[0.17, 0.022, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        <mesh position={[0.24, 0.29, 0.3]}>
-          <boxGeometry args={[0.17, 0.022, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        {/* Waist */}
-        <mesh position={[0, -0.58, 0]}>
-          <cylinderGeometry args={[0.28, 0.35, 0.23, 24]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        {/* Waist light */}
-        <mesh position={[0, -0.61, 0.27]}>
-          <boxGeometry args={[0.22, 0.025, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-      </group>
-
-
-      {/* ================= LEFT ARM ================= */}
-
-      <group position={[-0.59, 0.98, 0]}>
-
-        <mesh>
-          <sphereGeometry args={[0.23, 24, 20]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[-0.04, 0, 0]}>
-          <sphereGeometry args={[0.27, 24, 18]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[-0.04, -0.39, 0]}>
-          <capsuleGeometry args={[0.13, 0.46, 8, 16]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[-0.04, -0.68, 0]}>
-          <sphereGeometry args={[0.14, 20, 16]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[-0.04, -0.98, 0]}>
-          <capsuleGeometry args={[0.135, 0.46, 8, 16]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        <mesh position={[-0.04, -1.27, 0]}>
-          <cylinderGeometry args={[0.105, 0.11, 0.13, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        {/* Palm */}
-        <mesh position={[-0.04, -1.45, 0]}>
-          <boxGeometry args={[0.26, 0.26, 0.18]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        {/* Fingers */}
-        {[-0.105, -0.035, 0.035, 0.105].map((x, i) => (
-          <mesh
-            key={`left-finger-${i}`}
-            position={[x - 0.04, -1.63, 0]}
-          >
-            <capsuleGeometry args={[0.032, 0.14, 6, 10]} />
-            <meshStandardMaterial {...silver} />
-          </mesh>
+      {/* TORSO */}
+      <group position={[0, 0.82, 0]}>
+        <mesh><boxGeometry args={[0.9, 1.02, 0.5]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, 0.18, 0.27]}><boxGeometry args={[0.72, 0.52, 0.08]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[0, 0.18, 0.315]}><boxGeometry args={[0.52, 0.38, 0.04]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[-0.25, 0.32, 0.3]}><boxGeometry args={[0.18, 0.13, 0.05]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0.25, 0.32, 0.3]}><boxGeometry args={[0.18, 0.13, 0.05]} /><meshStandardMaterial {...silver} /></mesh>
+        {[-0.05, 0.05, 0.15].map((y, i) => (
+          <mesh key={`rib-${i}`} position={[0, y, 0.285]}><boxGeometry args={[0.62, 0.018, 0.02]} /><meshStandardMaterial {...darkMetal} /></mesh>
         ))}
-
-        {/* Thumb */}
-        <mesh
-          position={[-0.18, -1.51, 0.01]}
-          rotation={[0, 0, -0.7]}
-        >
-          <capsuleGeometry args={[0.035, 0.13, 6, 10]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-      </group>
-
-
-      {/* ================= RIGHT ARM ================= */}
-
-      <group position={[0.59, 0.98, 0]}>
-
-        <mesh>
-          <sphereGeometry args={[0.23, 24, 20]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[0.04, 0, 0]}>
-          <sphereGeometry args={[0.27, 24, 18]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[0.04, -0.39, 0]}>
-          <capsuleGeometry args={[0.13, 0.46, 8, 16]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[0.04, -0.68, 0]}>
-          <sphereGeometry args={[0.14, 20, 16]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[0.04, -0.98, 0]}>
-          <capsuleGeometry args={[0.135, 0.46, 8, 16]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        <mesh position={[0.04, -1.27, 0]}>
-          <cylinderGeometry args={[0.105, 0.11, 0.13, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        {/* Palm */}
-        <mesh position={[0.04, -1.45, 0]}>
-          <boxGeometry args={[0.26, 0.26, 0.18]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        {/* Fingers */}
-        {[-0.105, -0.035, 0.035, 0.105].map((x, i) => (
-          <mesh
-            key={`right-finger-${i}`}
-            position={[x + 0.04, -1.63, 0]}
-          >
-            <capsuleGeometry args={[0.032, 0.14, 6, 10]} />
-            <meshStandardMaterial {...silver} />
-          </mesh>
+        <group ref={reactorRef} position={[0, 0.1, 0.32]}>
+          <mesh><cylinderGeometry args={[0.12, 0.12, 0.055, 40]} /><meshStandardMaterial {...glow} /></mesh>
+          <mesh rotation={[0, 0, Math.PI / 6]}><torusGeometry args={[0.145, 0.015, 10, 40]} /><meshStandardMaterial {...glow2} /></mesh>
+        </group>
+        <mesh position={[-0.25, 0.32, 0.32]}><boxGeometry args={[0.14, 0.022, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[0.25, 0.32, 0.32]}><boxGeometry args={[0.14, 0.022, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[-0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.065, 0.065, 0.12, 16]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.065, 0.065, 0.12, 16]} /><meshStandardMaterial {...silver} /></mesh>
+        {[-0.15, 0, 0.15].map((x, i) => (
+          <mesh key={`spine-${i}`} position={[x, 0.06, -0.295]}><cylinderGeometry args={[0.022, 0.022, 0.68, 10]} /><meshStandardMaterial {...glow2} /></mesh>
         ))}
-
-        {/* Thumb */}
-        <mesh
-          position={[0.18, -1.51, 0.01]}
-          rotation={[0, 0, 0.7]}
-        >
-          <capsuleGeometry args={[0.035, 0.13, 6, 10]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
       </group>
 
-
-      {/* ================= LEFT LEG ================= */}
-
-      <group position={[-0.25, -0.03, 0]}>
-
-        <mesh>
-          <sphereGeometry args={[0.18, 22, 18]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[0, -0.39, 0]}>
-          <capsuleGeometry args={[0.175, 0.58, 8, 16]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[0, -0.75, 0.025]}>
-          <sphereGeometry args={[0.155, 22, 18]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0, -0.75, 0.17]}>
-          <boxGeometry args={[0.075, 0.022, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        <mesh position={[0, -1.1, 0]}>
-          <capsuleGeometry args={[0.15, 0.58, 8, 16]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        <mesh position={[0, -1.47, 0]}>
-          <cylinderGeometry args={[0.095, 0.11, 0.14, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0, -1.62, 0.1]}>
-          <boxGeometry args={[0.34, 0.2, 0.52]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
+      {/* HEAD */}
+      <group ref={headRef} position={[0, 1.74, 0]}>
+        <mesh position={[0, -0.38, 0]}><cylinderGeometry args={[0.18, 0.24, 0.32, 28]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[0, -0.28, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.21, 0.01, 10, 36]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh><boxGeometry args={[0.78, 0.82, 0.68]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, 0.35, 0.12]}><boxGeometry args={[0.72, 0.16, 0.48]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[0, -0.02, 0.36]}><boxGeometry args={[0.64, 0.6, 0.08]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0, 0.08, 0.41]}><boxGeometry args={[0.58, 0.15, 0.04]} /><meshStandardMaterial {...visorMat} /></mesh>
+        <mesh ref={eyeLeftRef} position={[-0.15, 0.09, 0.44]}><boxGeometry args={[0.14, 0.04, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh ref={eyeRightRef} position={[0.15, 0.09, 0.44]}><boxGeometry args={[0.14, 0.04, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[-0.16, 0.17, 0.4]}><boxGeometry args={[0.14, 0.025, 0.025]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0.16, 0.17, 0.4]}><boxGeometry args={[0.14, 0.025, 0.025]} /><meshStandardMaterial {...silver} /></mesh>
+        {[-0.09, -0.03, 0.03, 0.09].map((x, i) => (
+          <mesh key={`mouth-${i}`} position={[x, -0.1, 0.42]}><boxGeometry args={[0.018, 0.055, 0.01]} /><meshStandardMaterial {...glow2} /></mesh>
+        ))}
+        <mesh position={[0, -0.27, 0.3]}><boxGeometry args={[0.38, 0.12, 0.1]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[-0.42, 0.06, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 0.16, 18]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0.42, 0.06, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 0.16, 18]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[-0.43, 0.1, 0]}><sphereGeometry args={[0.038, 14, 14]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[0.43, 0.1, 0]}><sphereGeometry args={[0.038, 14, 14]} /><meshStandardMaterial {...glow} /></mesh>
       </group>
 
-
-      {/* ================= RIGHT LEG ================= */}
-
-      <group position={[0.25, -0.03, 0]}>
-
-        <mesh>
-          <sphereGeometry args={[0.18, 22, 18]} />
-          <meshStandardMaterial {...joint} />
-        </mesh>
-
-        <mesh position={[0, -0.39, 0]}>
-          <capsuleGeometry args={[0.175, 0.58, 8, 16]} />
-          <meshStandardMaterial {...metal} />
-        </mesh>
-
-        <mesh position={[0, -0.75, 0.025]}>
-          <sphereGeometry args={[0.155, 22, 18]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0, -0.75, 0.17]}>
-          <boxGeometry args={[0.075, 0.022, 0.025]} />
-          <meshStandardMaterial {...glow} />
-        </mesh>
-
-        <mesh position={[0, -1.1, 0]}>
-          <capsuleGeometry args={[0.15, 0.58, 8, 16]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
-        <mesh position={[0, -1.47, 0]}>
-          <cylinderGeometry args={[0.095, 0.11, 0.14, 20]} />
-          <meshStandardMaterial {...silver} />
-        </mesh>
-
-        <mesh position={[0, -1.62, 0.1]}>
-          <boxGeometry args={[0.34, 0.2, 0.52]} />
-          <meshStandardMaterial {...darkMetal} />
-        </mesh>
-
+      {/* LEFT ARM */}
+      <group ref={leftArmRef} position={[-0.62, 1.26, 0]}>
+        <mesh><sphereGeometry args={[0.29, 26, 22]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[-0.02, 0.01, 0.16]}><sphereGeometry args={[0.22, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[-0.08, 0.16, 0]} rotation={[0, 0, 0.3]}><boxGeometry args={[0.28, 0.14, 0.32]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[-0.06, -0.45, 0]}><capsuleGeometry args={[0.135, 0.54, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[-0.06, -0.78, 0]}><sphereGeometry args={[0.14, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[-0.06, -1.08, 0]}><capsuleGeometry args={[0.125, 0.5, 8, 16]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[-0.06, -1.05, 0.13]}><boxGeometry args={[0.09, 0.38, 0.025]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[-0.06, -1.36, 0]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.13, 0.022, 10, 28]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[-0.06, -1.56, 0]}><boxGeometry args={[0.28, 0.28, 0.2]} /><meshStandardMaterial {...metal} /></mesh>
+        {[-0.1, -0.033, 0.033, 0.1].map((x, i) => (
+          <mesh key={`lf-${i}`} position={[x - 0.06, -1.76, 0]}><capsuleGeometry args={[0.033, 0.16, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
+        ))}
+        <mesh position={[-0.22, -1.62, 0.04]} rotation={[0, 0, -0.65]}><capsuleGeometry args={[0.036, 0.14, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
       </group>
+
+      {/* RIGHT ARM */}
+      <group ref={rightArmRef} position={[0.62, 1.26, 0]}>
+        <mesh><sphereGeometry args={[0.29, 26, 22]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[0.02, 0.01, 0.16]}><sphereGeometry args={[0.22, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[0.08, 0.16, 0]} rotation={[0, 0, -0.3]}><boxGeometry args={[0.28, 0.14, 0.32]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0.06, -0.45, 0]}><capsuleGeometry args={[0.135, 0.54, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0.06, -0.78, 0]}><sphereGeometry args={[0.14, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[0.06, -1.08, 0]}><capsuleGeometry args={[0.125, 0.5, 8, 16]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0.06, -1.05, 0.13]}><boxGeometry args={[0.09, 0.38, 0.025]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[0.06, -1.36, 0]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.13, 0.022, 10, 28]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0.06, -1.56, 0]}><boxGeometry args={[0.28, 0.28, 0.2]} /><meshStandardMaterial {...metal} /></mesh>
+        {[-0.1, -0.033, 0.033, 0.1].map((x, i) => (
+          <mesh key={`rf-${i}`} position={[x + 0.06, -1.76, 0]}><capsuleGeometry args={[0.033, 0.16, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
+        ))}
+        <mesh position={[0.22, -1.62, 0.04]} rotation={[0, 0, 0.65]}><capsuleGeometry args={[0.036, 0.14, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
+      </group>
+
+      {/* LEFT LEG */}
+      <group ref={leftLegRef} position={[-0.26, -0.25, 0]}>
+        <mesh><sphereGeometry args={[0.2, 24, 20]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[0, -0.5, 0]}><capsuleGeometry args={[0.185, 0.72, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -0.42, 0.2]}><boxGeometry args={[0.28, 0.48, 0.06]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[0, -0.96, 0.04]}><sphereGeometry args={[0.17, 24, 20]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0, -0.96, 0.21]}><boxGeometry args={[0.09, 0.03, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[0, -1.38, 0.04]}><capsuleGeometry args={[0.165, 0.68, 8, 18]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0, -1.36, 0.2]}><boxGeometry args={[0.24, 0.5, 0.07]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -1.81, 0]}><cylinderGeometry args={[0.11, 0.13, 0.16, 22]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0, -1.97, 0.14]}><boxGeometry args={[0.36, 0.22, 0.58]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0, -2.0, 0.44]}><boxGeometry args={[0.3, 0.14, 0.08]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -1.87, 0.42]}><boxGeometry args={[0.26, 0.018, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
+      </group>
+
+      {/* RIGHT LEG */}
+      <group ref={rightLegRef} position={[0.26, -0.25, 0]}>
+        <mesh><sphereGeometry args={[0.2, 24, 20]} /><meshStandardMaterial {...joint} /></mesh>
+        <mesh position={[0, -0.5, 0]}><capsuleGeometry args={[0.185, 0.72, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -0.42, 0.2]}><boxGeometry args={[0.28, 0.48, 0.06]} /><meshStandardMaterial {...metalHi} /></mesh>
+        <mesh position={[0, -0.96, 0.04]}><sphereGeometry args={[0.17, 24, 20]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0, -0.96, 0.21]}><boxGeometry args={[0.09, 0.03, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
+        <mesh position={[0, -1.38, 0.04]}><capsuleGeometry args={[0.165, 0.68, 8, 18]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0, -1.36, 0.2]}><boxGeometry args={[0.24, 0.5, 0.07]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -1.81, 0]}><cylinderGeometry args={[0.11, 0.13, 0.16, 22]} /><meshStandardMaterial {...silver} /></mesh>
+        <mesh position={[0, -1.97, 0.14]}><boxGeometry args={[0.36, 0.22, 0.58]} /><meshStandardMaterial {...darkMetal} /></mesh>
+        <mesh position={[0, -2.0, 0.44]}><boxGeometry args={[0.3, 0.14, 0.08]} /><meshStandardMaterial {...metal} /></mesh>
+        <mesh position={[0, -1.87, 0.42]}><boxGeometry args={[0.26, 0.018, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
+      </group>
+
+      {/* GROUND GLOW HALO */}
+      <mesh position={[0, -2.26, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.3, 0.85, 40]} />
+        <meshStandardMaterial color={palette.glow} emissive={palette.glowEmit} emissiveIntensity={0.7} transparent opacity={0.22} side={2} />
+      </mesh>
 
     </group>
   );
 }
-// ================= FREE 3D ROCKET =================
-// ================= ROCKET =================
+
+// ================= ROCKET 3D (Ultra-Realistic) =================
 
 function Rocket3D({ active, mode = "light" }) {
-  const rocket = useRef();
+  const rocket    = useRef();
+  const flameRef  = useRef();
+  const flame2Ref = useRef();
+  const exhaustRef = useRef();
   const startTime = useRef(null);
 
   const isLight = mode === "light";
   const isCyber = mode === "cyber";
 
-  const rocketBody = isLight
-    ? "#d5dcda"
-    : isCyber
-    ? "#27343a"
-    : "#b9c4c0";
+  const bodyColor  = isCyber ? "#1c2c34" : isLight ? "#d8dede" : "#a8b6b2";
+  const panelColor = isCyber ? "#0d1a20" : isLight ? "#8a9998" : "#505e5a";
+  const accentCol  = isCyber ? "#38bdf8" : isLight ? "#168a68" : "#56d49a";
+  const noseColor  = isCyber ? "#0a1720" : isLight ? "#1e3530" : "#162320";
+  const windowGlow = isCyber ? "#0ea5e9" : isLight ? "#1bc390" : "#25e8a0";
+  const finColor   = isCyber ? "#152129" : isLight ? "#6e7f7b" : "#3e4d49";
 
-  const rocketDark = isLight
-    ? "#53615d"
-    : isCyber
-    ? "#0b1a21"
-    : "#18201e";
+  useEffect(() => { if (active) startTime.current = null; }, [active]);
 
-  const rocketAccent = isCyber
-    ? "#38bdf8"
-    : isLight
-    ? "#168a68"
-    : "#72f0b7";
+  useFrame((state, delta) => {
+    if (!rocket.current) return;
+    const t = state.clock.elapsedTime;
 
-  useEffect(() => {
+    // Continuous majestic 360-degree rotation to display fine fuselage and panel details
+    rocket.current.rotation.y += delta * 0.16;
+
     if (active) {
-      startTime.current = null;
+      if (startTime.current === null) startTime.current = t;
+      const elapsed = t - startTime.current;
+      const dur = 3.5;
+      if (elapsed < dur) {
+        const p = elapsed / dur;
+        const e = p * p * (3 - 2 * p);
+        rocket.current.position.y = -0.5 + e * 1.8;
+        rocket.current.rotation.z = Math.sin(elapsed * 2.8) * 0.022;
+      } else {
+        rocket.current.position.y = 1.3 + Math.sin(t * 1.2) * 0.04;
+        rocket.current.rotation.z = Math.sin(t * 0.9) * 0.012;
+      }
     }
-  }, [active]);
-
-  useFrame((state) => {
-    if (!rocket.current || !active) return;
-
-    if (startTime.current === null) {
-      startTime.current = state.clock.elapsedTime;
+    if (flameRef.current) {
+      const s = 0.85 + Math.sin(t * 22) * 0.12;
+      flameRef.current.scale.set(s, 0.9 + Math.sin(t * 18) * 0.1, s);
     }
-
-    const elapsed =
-      state.clock.elapsedTime - startTime.current;
-
-    const duration = 3.0;
-
-    if (elapsed < duration) {
-      const progress = elapsed / duration;
-
-      const eased =
-        progress * progress * (3 - 2 * progress);
-
-      // Controlled takeoff — stays inside frame
-      rocket.current.position.y =
-        -0.55 + eased * 1.65;
-
-      rocket.current.rotation.z =
-        Math.sin(elapsed * 3) * 0.02;
-    } else {
-      // Hold near upper-middle area instead of leaving screen
-      rocket.current.position.y = 1.1;
-      rocket.current.rotation.z = 0;
+    if (flame2Ref.current) {
+      const s2 = 0.7 + Math.sin(t * 27 + 1) * 0.15;
+      flame2Ref.current.scale.set(s2, 0.85 + Math.sin(t * 20 + 0.5) * 0.12, s2);
+    }
+    if (exhaustRef.current) {
+      const s3 = 1 + Math.sin(t * 30 + 2) * 0.08;
+      exhaustRef.current.scale.set(s3, 1, s3);
     }
   });
 
   return (
-    <group
-      ref={rocket}
-      position={[0, -0.55, 0]}
-      scale={0.68}
-    >
+    <group ref={rocket} position={[0, -0.5, 0]} scale={0.75}>
 
-      {/* BODY */}
-      <mesh>
-        <cylinderGeometry args={[0.28, 0.37, 1.55, 32]} />
-        <meshStandardMaterial
-          color={rocketBody}
-          metalness={0.72}
-          roughness={0.23}
-        />
-      </mesh>
+      {/* MAIN BODY */}
+      <mesh><cylinderGeometry args={[0.31, 0.42, 1.8, 40]} /><meshStandardMaterial color={bodyColor} metalness={0.82} roughness={0.2} /></mesh>
 
-      {/* NOSE */}
-      <mesh position={[0, 1.0, 0]}>
-        <coneGeometry args={[0.28, 0.58, 32]} />
-        <meshStandardMaterial
-          color={rocketAccent}
-          metalness={0.5}
-          roughness={0.25}
-        />
-      </mesh>
+      {/* Body panel rings */}
+      {[0.5, 0.1, -0.3].map((y, i) => (
+        <mesh key={`panel-${i}`} position={[0, y, 0]}>
+          <torusGeometry args={[0.315 + i * 0.02, 0.008, 8, 60]} />
+          <meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.15} />
+        </mesh>
+      ))}
 
-      {/* WINDOW */}
-      <mesh position={[0, 0.32, 0.3]}>
-        <sphereGeometry args={[0.12, 24, 24]} />
-        <meshStandardMaterial
-          color="#071b24"
-          emissive={isCyber ? "#0ea5e9" : "#165d66"}
-          emissiveIntensity={0.8}
-          metalness={0.65}
-          roughness={0.1}
-        />
-      </mesh>
+      {/* Vertical seams */}
+      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((a, i) => (
+        <mesh key={`seam-${i}`} position={[Math.cos(a) * 0.32, 0, Math.sin(a) * 0.32]}>
+          <boxGeometry args={[0.018, 1.7, 0.018]} />
+          <meshStandardMaterial color={panelColor} metalness={0.85} roughness={0.18} />
+        </mesh>
+      ))}
 
-      {/* LEFT FIN */}
-      <mesh position={[-0.34, -0.45, 0]}>
-        <boxGeometry args={[0.16, 0.48, 0.14]} />
-        <meshStandardMaterial
-          color={rocketDark}
-          metalness={0.8}
-          roughness={0.2}
-        />
-      </mesh>
+      {/* NOSE CONE */}
+      <mesh position={[0, 1.18, 0]}><coneGeometry args={[0.31, 0.72, 40]} /><meshStandardMaterial color={noseColor} metalness={0.65} roughness={0.22} /></mesh>
+      <mesh position={[0, 1.56, 0]}><sphereGeometry args={[0.04, 14, 14]} /><meshStandardMaterial color={accentCol} emissive={accentCol} emissiveIntensity={2.5} /></mesh>
+      {/* Telemetry spike */}
+      <mesh position={[0, 1.68, 0]}><cylinderGeometry args={[0.006, 0.012, 0.22, 12]} /><meshStandardMaterial color={panelColor} metalness={0.95} roughness={0.1} /></mesh>
 
-      {/* RIGHT FIN */}
-      <mesh position={[0.34, -0.45, 0]}>
-        <boxGeometry args={[0.16, 0.48, 0.14]} />
-        <meshStandardMaterial
-          color={rocketDark}
-          metalness={0.8}
-          roughness={0.2}
-        />
-      </mesh>
+      {/* PORTHOLES */}
+      {[0, Math.PI * 0.66, Math.PI * 1.33].map((a, i) => (
+        <group key={`win-${i}`} position={[Math.cos(a) * 0.33, 0.45, Math.sin(a) * 0.33]}>
+          <mesh><cylinderGeometry args={[0.09, 0.09, 0.04, 24]} /><meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.14} /></mesh>
+          <mesh position={[0, 0.025, 0]}><cylinderGeometry args={[0.072, 0.072, 0.02, 24]} /><meshStandardMaterial color="#071b24" emissive={windowGlow} emissiveIntensity={1.8} metalness={0.7} roughness={0.05} /></mesh>
+        </group>
+      ))}
+
+      {/* PAYLOAD FAIRING */}
+      <mesh position={[0, 0.92, 0]}><cylinderGeometry args={[0.34, 0.34, 0.1, 36]} /><meshStandardMaterial color={panelColor} metalness={0.88} roughness={0.2} /></mesh>
+      <mesh position={[0, 0.97, 0]}><torusGeometry args={[0.345, 0.012, 10, 60]} /><meshStandardMaterial color={accentCol} emissive={accentCol} emissiveIntensity={2} /></mesh>
+
+      {/* 4 SWEPT FINS */}
+      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((a, i) => (
+        <group key={`fin-${i}`} rotation={[0, a, 0]}>
+          <mesh position={[0.44, -0.72, 0]} rotation={[0, 0, -0.18]}><boxGeometry args={[0.28, 0.62, 0.08]} /><meshStandardMaterial color={finColor} metalness={0.85} roughness={0.2} /></mesh>
+          <mesh position={[0.56, -0.56, 0]} rotation={[0, 0, -0.52]}><boxGeometry args={[0.07, 0.44, 0.06]} /><meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.15} /></mesh>
+        </group>
+      ))}
 
       {/* ENGINE */}
-      <mesh position={[0, -0.9, 0]}>
-        <cylinderGeometry args={[0.19, 0.27, 0.22, 24]} />
-        <meshStandardMaterial
-          color={rocketDark}
-          metalness={0.9}
-          roughness={0.18}
-        />
+      <mesh position={[0, -1.08, 0]}><cylinderGeometry args={[0.42, 0.44, 0.28, 36]} /><meshStandardMaterial color={panelColor} metalness={0.94} roughness={0.14} /></mesh>
+      <mesh position={[0, -1.38, 0]}><cylinderGeometry args={[0.22, 0.36, 0.32, 36]} /><meshStandardMaterial color={panelColor} metalness={0.96} roughness={0.12} /></mesh>
+      <mesh position={[0, -1.56, 0]}><cylinderGeometry args={[0.19, 0.22, 0.05, 30]} /><meshStandardMaterial color="#ff8c3a" emissive="#ff5500" emissiveIntensity={4.5} /></mesh>
+
+      {/* EXHAUST GLOW */}
+      <group ref={exhaustRef} position={[0, -1.62, 0]}>
+        <mesh><cylinderGeometry args={[0.18, 0.22, 0.06, 24]} /><meshStandardMaterial color="#ff9a40" emissive="#ff6010" emissiveIntensity={5} transparent opacity={0.9} /></mesh>
+      </group>
+
+      {/* SHOCK DIAMONDS IN SUPERSONIC EXHAUST */}
+      <mesh position={[0, -1.82, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.085, 0.015, 8, 24]} />
+        <meshStandardMaterial color="#ffffff" emissive="#ffeaa0" emissiveIntensity={6} />
+      </mesh>
+      <mesh position={[0, -2.08, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.055, 0.012, 8, 20]} />
+        <meshStandardMaterial color="#ffffff" emissive="#ffaa40" emissiveIntensity={5} />
       </mesh>
 
-      {/* FLAME */}
-      <mesh position={[0, -1.28, 0]}>
-        <coneGeometry args={[0.25, 0.8, 24]} />
-        <meshStandardMaterial
-          color="#ff9d55"
-          emissive="#ff4d22"
-          emissiveIntensity={4}
-        />
-      </mesh>
+      {/* OUTER FLAME */}
+      <group ref={flameRef} position={[0, -2.14, 0]}>
+        <mesh><coneGeometry args={[0.3, 1.1, 30]} /><meshStandardMaterial color="#ffb347" emissive="#ff4500" emissiveIntensity={5} transparent opacity={0.88} /></mesh>
+      </group>
+
+      {/* INNER FLAME CORE */}
+      <group ref={flame2Ref} position={[0, -1.95, 0]}>
+        <mesh><coneGeometry args={[0.14, 0.75, 24]} /><meshStandardMaterial color="#ffffff" emissive="#ffe0a0" emissiveIntensity={8} transparent opacity={0.95} /></mesh>
+      </group>
 
     </group>
   );
 }
 
-// ================= RESEARCH MODEL =================
+// ================= RESEARCH MODEL 3D (Ultra-Realistic) =================
 
 function Research3D({ mode = "light" }) {
   const group = useRef();
+  const innerCoreRef = useRef();
+  const orbit1Ref = useRef();
+  const orbit2Ref = useRef();
+  const orbit3Ref = useRef();
+  const particleRefs = useRef([]);
 
   const isLight = mode === "light";
   const isCyber = mode === "cyber";
 
-  const mainColor = isCyber
-    ? "#38bdf8"
-    : isLight
-    ? "#168a68"
-    : "#6fae8d";
+  const mainCol   = isCyber ? "#38bdf8" : isLight ? "#168a68" : "#56d4a0";
+  const mainEmit  = isCyber ? "#0ea5e9" : isLight ? "#0aaa5e" : "#30c080";
+  const orbit1Col = isCyber ? "#a855f7" : isLight ? "#b56b3e" : "#d47a45";
+  const orbit2Col = isCyber ? "#60a5fa" : isLight ? "#168a68" : "#72c8a0";
+  const orbit3Col = isCyber ? "#f59e0b" : isLight ? "#c07830" : "#d08040";
+  const coreColor = isCyber ? "#0a1e2c" : isLight ? "#0d2520" : "#081510";
+  const nodeCol   = isCyber ? "#38bdf8" : isLight ? "#16c381" : "#55e8a0";
 
-  const orbitColor = isCyber
-    ? "#7c3aed"
-    : isLight
-    ? "#b56b3e"
-    : "#d58d5f";
+  const helixNodes = useMemo(() => {
+    const pts = [];
+    const steps = 24;
+    for (let i = 0; i < steps; i++) {
+      const t2 = (i / steps) * Math.PI * 4;
+      const r = 0.62;
+      const y = (i / steps) * 2.4 - 1.2;
+      pts.push({ x: Math.cos(t2) * r, y, z: Math.sin(t2) * r, strand: 0 });
+      pts.push({ x: Math.cos(t2 + Math.PI) * r, y: y + 0.05, z: Math.sin(t2 + Math.PI) * r, strand: 1 });
+    }
+    return pts;
+  }, []);
 
-  const nodeColor = isCyber
-    ? "#60a5fa"
-    : isLight
-    ? "#168a68"
-    : "#91d5ad";
-
-  const groupMaterial = {
-    color: mainColor,
-    transparent: true,
-    opacity: 0.55,
-    wireframe: true,
-    metalness: 0.3,
-    roughness: 0.25,
-  };
+  const outerNodes = useMemo(() => [
+    { pos: [-1.35,  0.6,  0.0], col: nodeCol,   r: 0.09 },
+    { pos: [ 1.35,  0.6,  0.0], col: orbit1Col, r: 0.09 },
+    { pos: [-1.2,  -0.65, 0.2], col: orbit2Col, r: 0.075 },
+    { pos: [ 1.2,  -0.65,-0.2], col: nodeCol,   r: 0.075 },
+    { pos: [ 0.0,   1.45, 0.0], col: orbit1Col, r: 0.085 },
+    { pos: [ 0.0,  -1.45, 0.0], col: orbit3Col, r: 0.085 },
+    { pos: [-0.85,  0.0,  1.1], col: orbit2Col, r: 0.07  },
+    { pos: [ 0.85,  0.0, -1.1], col: nodeCol,   r: 0.07  },
+  ], [nodeCol, orbit1Col, orbit2Col, orbit3Col]);
 
   useFrame((state, delta) => {
     if (!group.current) return;
-
     const t = state.clock.elapsedTime;
-
-    group.current.rotation.y += delta * 0.12;
-
-    group.current.rotation.x =
-      Math.sin(t * 0.4) * 0.055;
+    group.current.rotation.y += delta * 0.11;
+    group.current.rotation.x = Math.sin(t * 0.35) * 0.06;
+    if (innerCoreRef.current) {
+      innerCoreRef.current.rotation.y -= delta * 0.22;
+      innerCoreRef.current.rotation.z = Math.sin(t * 0.5) * 0.12;
+    }
+    if (orbit1Ref.current) orbit1Ref.current.rotation.z += delta * 0.38;
+    if (orbit2Ref.current) orbit2Ref.current.rotation.x += delta * 0.28;
+    if (orbit3Ref.current) { orbit3Ref.current.rotation.y += delta * 0.2; orbit3Ref.current.rotation.x += delta * 0.14; }
+    particleRefs.current.forEach((ref, i) => {
+      if (!ref) return;
+      const phase = (i / particleRefs.current.length) * Math.PI * 2;
+      ref.scale.setScalar(1 + Math.sin(t * 2.5 + phase) * 0.18);
+    });
   });
 
-  const nodes = [
-    [-1.15, 0.65, 0],
-    [1.15, 0.65, 0],
-    [-1.0, -0.65, 0.15],
-    [1.0, -0.65, -0.15],
-    [0, 1.15, 0],
-    [0, -1.15, 0],
-  ];
-
   return (
-    <group
-      ref={group}
-      scale={1.05}
-    >
+    <group ref={group} scale={1.1}>
 
-      {/* CENTRAL MODEL */}
+      {/* CENTRAL CORE */}
       <mesh>
-        <icosahedronGeometry args={[1.0, 2]} />
-        <meshStandardMaterial {...groupMaterial} />
+        <icosahedronGeometry args={[0.52, 3]} />
+        <meshStandardMaterial color={coreColor} metalness={0.85} roughness={0.06} emissive={mainEmit} emissiveIntensity={0.18} />
       </mesh>
-
-      {/* SECOND INNER CORE */}
       <mesh>
-        <icosahedronGeometry args={[0.62, 1]} />
-        <meshStandardMaterial
-          color={nodeColor}
-          transparent
-          opacity={0.2}
-          wireframe
-        />
+        <icosahedronGeometry args={[0.58, 2]} />
+        <meshStandardMaterial color={mainCol} transparent opacity={0.35} wireframe emissive={mainEmit} emissiveIntensity={0.5} />
       </mesh>
 
-      {/* ORBIT 1 */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry
-          args={[1.35, 0.014, 12, 100]}
-        />
-        <meshStandardMaterial
-          color={orbitColor}
-          emissive={orbitColor}
-          emissiveIntensity={0.65}
-        />
-      </mesh>
+      {/* INNER SPINNING DODECAHEDRON */}
+      <group ref={innerCoreRef}>
+        <mesh>
+          <dodecahedronGeometry args={[0.35, 0]} />
+          <meshStandardMaterial color={mainCol} transparent opacity={0.55} wireframe emissive={mainEmit} emissiveIntensity={0.9} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[0.2, 24, 24]} />
+          <meshStandardMaterial color={mainCol} emissive={mainEmit} emissiveIntensity={3.5} transparent opacity={0.9} />
+        </mesh>
+      </group>
 
-      {/* ORBIT 2 */}
-      <mesh rotation={[0.7, 0.35, 0.3]}>
-        <torusGeometry
-          args={[1.18, 0.01, 10, 80]}
-        />
-        <meshStandardMaterial
-          color={nodeColor}
-          emissive={nodeColor}
-          emissiveIntensity={0.7}
-        />
-      </mesh>
-
-      {/* NODES */}
-      {nodes.map((position, index) => (
-        <mesh
-          key={`research-node-${index}`}
-          position={position}
-        >
-          <sphereGeometry args={[0.085, 20, 20]} />
-
-          <meshStandardMaterial
-            color={nodeColor}
-            emissive={nodeColor}
-            emissiveIntensity={1.4}
-          />
+      {/* DNA HELIX */}
+      {helixNodes.map((node, i) => (
+        <mesh key={`helix-${i}`} position={[node.x, node.y, node.z]}>
+          <sphereGeometry args={[0.038, 12, 12]} />
+          <meshStandardMaterial color={node.strand === 0 ? mainCol : orbit1Col} emissive={node.strand === 0 ? mainEmit : orbit1Col} emissiveIntensity={1.6} />
         </mesh>
       ))}
+      {/* Helix rungs */}
+      {Array.from({ length: 12 }, (_, i) => {
+        const a = (i / 12) * Math.PI * 4;
+        const y = (i / 12) * 2.4 - 1.2;
+        const r = 0.62;
+        const x0 = Math.cos(a) * r; const z0 = Math.sin(a) * r;
+        const x1 = Math.cos(a + Math.PI) * r; const z1 = Math.sin(a + Math.PI) * r;
+        const cx = (x0 + x1) / 2; const cz = (z0 + z1) / 2;
+        const len = Math.sqrt((x1 - x0) ** 2 + (z1 - z0) ** 2);
+        const ang = Math.atan2(z1 - z0, x1 - x0);
+        return (
+          <mesh key={`rung-${i}`} position={[cx, y, cz]} rotation={[0, ang, Math.PI / 2]}>
+            <cylinderGeometry args={[0.012, 0.012, len, 8]} />
+            <meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={0.8} transparent opacity={0.7} />
+          </mesh>
+        );
+      })}
+
+      {/* ORBITAL RINGS */}
+      <group ref={orbit1Ref} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh><torusGeometry args={[1.48, 0.016, 14, 120]} /><meshStandardMaterial color={orbit1Col} emissive={orbit1Col} emissiveIntensity={1.4} /></mesh>
+        <mesh position={[1.48, 0, 0]}><sphereGeometry args={[0.062, 16, 16]} /><meshStandardMaterial color={orbit1Col} emissive={orbit1Col} emissiveIntensity={3} /></mesh>
+      </group>
+      <group ref={orbit2Ref} rotation={[0.62, 0.35, 0.28]}>
+        <mesh><torusGeometry args={[1.22, 0.012, 12, 100]} /><meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={1.2} /></mesh>
+        <mesh position={[0, 1.22, 0]}><sphereGeometry args={[0.05, 14, 14]} /><meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={3} /></mesh>
+      </group>
+      <group ref={orbit3Ref} rotation={[-0.35, 0.6, 0.8]}>
+        <mesh><torusGeometry args={[1.0, 0.009, 10, 80]} /><meshStandardMaterial color={orbit3Col} emissive={orbit3Col} emissiveIntensity={1.0} transparent opacity={0.8} /></mesh>
+      </group>
+
+      {/* SATELLITE NODES */}
+      {outerNodes.map((node, i) => (
+        <mesh key={`sat-${i}`} position={node.pos} ref={(el) => { particleRefs.current[i] = el; }}>
+          <sphereGeometry args={[node.r, 18, 18]} />
+          <meshStandardMaterial color={node.col} emissive={node.col} emissiveIntensity={2.2} />
+        </mesh>
+      ))}
+
+      {/* CONNECTION LINES */}
+      {outerNodes.slice(0, 6).map((node, i) => {
+        const [x, y, z] = node.pos;
+        const len = Math.sqrt(x * x + y * y + z * z);
+        const ux = x / len; const uy = y / len; const uz = z / len;
+        const cx = ux * len / 2; const cy = uy * len / 2; const cz = uz * len / 2;
+        const rotX = -Math.atan2(uz, Math.sqrt(ux * ux + uy * uy));
+        const rotY = Math.atan2(ux, uy);
+        return (
+          <mesh key={`conn-${i}`} position={[cx, cy, cz]} rotation={[rotX, rotY, 0]}>
+            <cylinderGeometry args={[0.008, 0.008, len, 6]} />
+            <meshStandardMaterial color={node.col} emissive={node.col} emissiveIntensity={0.6} transparent opacity={0.45} />
+          </mesh>
+        );
+      })}
 
     </group>
   );
@@ -2119,31 +1889,33 @@ function Research3D({ mode = "light" }) {
 
 function Portfolio3D({ mode = "light", playing = false }) {
   const [stage, setStage] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
-    if (!playing) {
-      setStage(0);
-      return;
-    }
+    const checkMobile = () => setIsMobile(window.innerWidth <= 760);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-    // Start with robot
-    setStage(0);
+  // Smooth automatic cycling through models, pausing if the user manually selected one
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!userInteracted) {
+        setStage((prev) => (prev + 1) % 3);
+      }
+    }, 6000);
 
-    // Robot → Rocket
-    const rocketTimer = window.setTimeout(() => {
-      setStage(1);
-    }, 3500);
+    return () => clearInterval(timer);
+  }, [userInteracted]);
 
-    // Rocket → Research
-    const researchTimer = window.setTimeout(() => {
-      setStage(2);
-    }, 8000);
-
-    return () => {
-      window.clearTimeout(rocketTimer);
-      window.clearTimeout(researchTimer);
-    };
-  }, [playing]);
+  const selectStage = (index) => {
+    setStage(index);
+    setUserInteracted(true);
+    // Resume auto-cycle after 14 seconds of user inactivity
+    setTimeout(() => setUserInteracted(false), 14000);
+  };
 
   const isLight = mode === "light";
   const isCyber = mode === "cyber";
@@ -2158,7 +1930,6 @@ function Portfolio3D({ mode = "light", playing = false }) {
     <div className="portfolio3D">
 
       {/* ================= TOP LABEL ================= */}
-
       <div
         className="portfolio3DHeader"
         style={{
@@ -2166,21 +1937,30 @@ function Portfolio3D({ mode = "light", playing = false }) {
         }}
       >
         <span>
-          {stage === 0 && "ROBOTICS / 01"}
-          {stage === 1 && "FLIGHT TEST / 02"}
-          {stage === 2 && "RESEARCH / 03"}
+          {stage === 0 && "HUMANOID ROBOTICS / 01"}
+          {stage === 1 && "ORBITAL STARSHIP / 02"}
+          {stage === 2 && "BIO-QUANTUM RESEARCH / 03"}
         </span>
 
         <span>
-          ROBOTICS · ORBIT · INQUIRY
+          DRAG TO ROTATE · REALTIME 3D
         </span>
       </div>
 
+      {/* ================= MODEL BADGE (Unobstructed at top) ================= */}
+      <div
+        className="portfolio3DLabel"
+        style={{
+          borderColor: `${sceneAccent}55`,
+        }}
+      >
+        {stage === 0 && "NEURAL ROBOT SYSTEM"}
+        {stage === 1 && "AEROSPACE PROPULSION"}
+        {stage === 2 && "QUANTUM RESEARCH LATTICE"}
+      </div>
 
       {/* ================= 3D CANVAS ================= */}
-
       <div className="portfolio3DScene">
-
         <Canvas
           camera={{
             position: [0, 0.15, 5.8],
@@ -2192,52 +1972,53 @@ function Portfolio3D({ mode = "light", playing = false }) {
             alpha: true,
           }}
         >
+          {/* Base ambient illumination */}
+          <ambientLight intensity={isLight ? 1.5 : 1.1} />
 
-          {/* Base illumination */}
-          <ambientLight
-            intensity={isLight ? 1.8 : 1.35}
-          />
-
-          {/* Main key light */}
+          {/* Main Key light */}
           <directionalLight
             position={[4, 5, 5]}
-            intensity={isLight ? 3.4 : 2.7}
+            intensity={isLight ? 3.4 : 2.8}
           />
 
-          {/* Secondary light */}
+          {/* Side fill light with theme tone */}
           <directionalLight
             position={[-4, 2, 3]}
-            intensity={isLight ? 1.7 : 1.4}
+            intensity={isLight ? 1.5 : 1.2}
             color={sceneAccent}
           />
 
-          {/* Accent point light */}
+          {/* High-contrast rim/back light to catch metallic edges and bevels */}
+          <directionalLight
+            position={[0, 5, -4.5]}
+            intensity={isLight ? 2.8 : 3.4}
+            color={isCyber ? "#38bdf8" : isLight ? "#ffffff" : "#72f0b7"}
+          />
+
+          {/* Pedestal underglow light */}
           <pointLight
-            position={[-2.5, 1.5, 2]}
-            intensity={isLight ? 1.5 : 2}
+            position={[0, -2, 1.2]}
+            intensity={isLight ? 1.6 : 2.4}
             color={sceneAccent}
+            distance={6.5}
           />
 
-          {/* Subtle background stars */}
+          {/* Subtle celestial stars */}
           <Stars
             radius={10}
             depth={5}
-            count={180}
-            factor={1.1}
+            count={220}
+            factor={1.2}
             saturation={0}
             fade
           />
 
-
           {/* ================= ROBOT ================= */}
-
           <group visible={stage === 0}>
             <Robot3D mode={mode} />
           </group>
 
-
           {/* ================= ROCKET ================= */}
-
           <group visible={stage === 1}>
             <Rocket3D
               active={stage === 1}
@@ -2245,65 +2026,59 @@ function Portfolio3D({ mode = "light", playing = false }) {
             />
           </group>
 
-
           {/* ================= RESEARCH ================= */}
-
           <group visible={stage === 2}>
             <Research3D mode={mode} />
           </group>
 
-
-          {/* Keep interaction but no zoom/pan */}
+          {/* OrbitControls: responsive drag on desktop, touch transparent on mobile */}
           <OrbitControls
             enableZoom={false}
             enablePan={false}
             autoRotate={false}
+            enableRotate={!isMobile}
+            touches={{ ONE: undefined, TWO: undefined }}
             minPolarAngle={Math.PI / 2.5}
             maxPolarAngle={Math.PI / 1.7}
           />
-
         </Canvas>
-
       </div>
 
+      {/* ================= INTERACTIVE DOCK / TABS ================= */}
+      <div className="portfolio3DLegend" role="tablist" aria-label="3D Model selector">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={stage === 0}
+          className={`legendBtn ${stage === 0 ? "active" : ""}`}
+          onClick={() => selectStage(0)}
+        >
+          <span className="dot" /> AI ROBOT
+        </button>
 
-      {/* ================= CENTER LABEL ================= */}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={stage === 1}
+          className={`legendBtn ${stage === 1 ? "active" : ""}`}
+          onClick={() => selectStage(1)}
+        >
+          <span className="dot" /> FLIGHT SYSTEM
+        </button>
 
-      <div
-        className="portfolio3DLabel"
-        style={{
-          borderColor: `${sceneAccent}55`,
-        }}
-      >
-        {stage === 0 && "ROBOT BUILD"}
-        {stage === 1 && "ORBIT / TAKEOFF"}
-        {stage === 2 && "RESEARCH MODEL"}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={stage === 2}
+          className={`legendBtn ${stage === 2 ? "active" : ""}`}
+          onClick={() => selectStage(2)}
+        >
+          <span className="dot" /> QUANTUM DATA
+        </button>
       </div>
-
-
-      {/* ================= LEGEND ================= */}
-
-      <div className="portfolio3DLegend">
-
-        <span className={stage === 0 ? "active" : ""}>
-          ● AI MODELS
-        </span>
-
-        <span className={stage === 1 ? "active" : ""}>
-          ● FLIGHT SYSTEMS
-        </span>
-
-        <span className={stage === 2 ? "active" : ""}>
-          ● DATA SYSTEMS
-        </span>
-
-      </div>
-
 
       {/* ================= CSS ================= */}
-
       <style jsx>{`
-
         .portfolio3D {
           position: relative;
           width: 100%;
@@ -2311,169 +2086,194 @@ function Portfolio3D({ mode = "light", playing = false }) {
           overflow: hidden;
           transform: translateY(20px);
           isolation: isolate;
+          touch-action: pan-y;
         }
 
         .portfolio3DScene {
           position: absolute;
           inset: 0;
           overflow: hidden;
+          touch-action: pan-y;
         }
 
         .portfolio3D canvas {
           width: 100% !important;
           height: 100% !important;
           display: block;
+          touch-action: pan-y;
         }
 
         .portfolio3DHeader {
           position: absolute;
-          top: 20px;
+          top: 18px;
           left: 0;
           right: 0;
-
           z-index: 10;
-
           display: flex;
           justify-content: space-between;
           align-items: center;
-
-          padding: 0 4px;
-
+          padding: 0 10px;
           font-size: 9px;
           font-weight: 700;
           letter-spacing: 0.14em;
           text-transform: uppercase;
-
           pointer-events: none;
-
           transition: color 0.35s ease;
         }
 
         .portfolio3DLabel {
           position: absolute;
-
-          top: 50%;
+          top: 48px;
           left: 50%;
-
-          transform: translate(-50%, -50%);
-
+          transform: translateX(-50%);
           z-index: 20;
-
-          padding: 7px 12px;
-
-          background: var(--panel);
-
+          padding: 6px 14px;
+          background: rgba(var(--panel-rgb, 20, 26, 24), 0.75);
           border: 1px solid;
-
-          border-radius: 6px;
-
+          border-radius: 999px;
           color: var(--text);
-
           font-size: 8px;
           font-weight: 700;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
-
           white-space: nowrap;
-
           backdrop-filter: blur(12px);
-
+          -webkit-backdrop-filter: blur(12px);
           pointer-events: none;
-
-          box-shadow:
-            0 8px 30px rgba(0, 0, 0, 0.12);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+          transition: border-color 0.3s ease;
         }
 
         .portfolio3DLegend {
           position: absolute;
-
           bottom: 18px;
           left: 50%;
-
           transform: translateX(-50%);
-
-          z-index: 20;
-
-          display: flex;
+          z-index: 25;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-
-          gap: 18px;
-
-          color: var(--text-muted);
-
-          font-size: 8px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-
+          gap: 6px;
+          padding: 4px 6px;
+          background: rgba(15, 23, 20, 0.45);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 999px;
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+          pointer-events: auto;
           white-space: nowrap;
-
-          pointer-events: none;
         }
 
-        .portfolio3DLegend span {
-          opacity: 0.6;
-          transition:
-            opacity 0.3s ease,
-            color 0.3s ease,
-            transform 0.3s ease;
+        .legendBtn {
+          all: unset;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 999px;
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          opacity: 0.7;
+          border: 1px solid transparent;
+          transition: all 0.22s ease;
         }
 
-        .portfolio3DLegend span.active {
-          color: var(--accent);
+        .legendBtn:hover {
           opacity: 1;
-          transform: translateY(-1px);
+          color: var(--text);
+          background: rgba(255, 255, 255, 0.06);
+        }
+
+        .legendBtn.active {
+          opacity: 1;
+          color: var(--accent);
+          background: rgba(22, 195, 129, 0.12);
+          border-color: rgba(22, 195, 129, 0.3);
+          box-shadow: 0 0 14px rgba(22, 195, 129, 0.18);
+        }
+
+        .dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: currentColor;
+          display: inline-block;
+          transition: transform 0.2s ease;
+        }
+
+        .legendBtn.active .dot {
+          transform: scale(1.3);
         }
 
         @media (max-width: 900px) {
-
           .portfolio3D {
             height: 520px;
             transform: none;
           }
-
           .portfolio3DHeader {
             top: 14px;
             font-size: 8px;
           }
-
+          .portfolio3DLabel {
+            top: 40px;
+          }
           .portfolio3DLegend {
             bottom: 14px;
-            gap: 10px;
+            gap: 4px;
+          }
+          .legendBtn {
+            padding: 5px 9px;
             font-size: 7px;
           }
+        }
 
+        @media (max-width: 760px) {
+          .portfolio3D {
+            height: 380px;
+            transform: none;
+            pointer-events: none;
+          }
+          .portfolio3D canvas {
+            pointer-events: none;
+          }
+          .portfolio3DLegend {
+            pointer-events: auto !important;
+          }
         }
 
         @media (max-width: 560px) {
-
           .portfolio3D {
-            height: 440px;
+            height: 320px;
           }
-
           .portfolio3DHeader {
             padding: 0 8px;
             font-size: 7px;
           }
-
           .portfolio3DHeader span:last-child {
             display: none;
           }
-
           .portfolio3DLabel {
             font-size: 7px;
-            padding: 6px 9px;
+            padding: 4px 10px;
+            top: 36px;
           }
-
           .portfolio3DLegend {
-            gap: 8px;
-            font-size: 6px;
+            gap: 2px;
+            padding: 3px 4px;
+            bottom: 10px;
           }
-
+          .legendBtn {
+            padding: 4px 7px;
+            font-size: 6.5px;
+            letter-spacing: 0.08em;
+          }
         }
-
       `}</style>
-
     </div>
   );
 }
@@ -2546,7 +2346,7 @@ function Hero({ mode, onSceneReady, playing }) {
   className="heroResearchVisual"
   aria-label="Interactive 3D portfolio visual"
 >
-  <Portfolio3D playing={playing} />
+  <Portfolio3D mode={mode} playing={playing} />
 </aside>
           </div>
 
@@ -2917,6 +2717,10 @@ function Hero({ mode, onSceneReady, playing }) {
             width: 100%;
             transform: none !important;
             opacity: 1 !important;
+          }
+          .heroResearchVisual {
+            overflow: hidden;
+            touch-action: pan-y;
           }
           .heroSplitStage.is-centered .heroResearchVisual {
             flex-basis: auto !important;

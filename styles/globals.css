@@ -901,6 +901,19 @@ body.app.light {
   --accent-glow: 0 8px 24px rgba(40, 116, 93, 0.13) !important;
   --tag-bg: #e9eee7 !important;
   --tag-text: #405e4f !important;
+
+  /* Section-Specific Backgrounds - Light Mode */
+  --home-bg: linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%) !important;
+  --about-bg: transparent !important;
+  --experience-bg: transparent !important;
+  --projects-bg: linear-gradient(180deg, #edf3ea 0%, #e4ebe2 100%) !important;
+  --tech-bg: linear-gradient(180deg, #dce7dd 0%, #cfded1 100%) !important;
+  --tech-grid: radial-gradient(rgba(40, 116, 93, 0.14) 0.8px, transparent 0.8px) !important;
+  --tech-glow: radial-gradient(circle at 50% 0%, rgba(40, 116, 93, 0.11) 0%, transparent 68%) !important;
+  --tech-card-bg: #ffffff !important;
+  --tech-card-border: rgba(40, 116, 93, 0.22) !important;
+  --thought-bg: #e1eae0 !important;
+  --contact-bg: linear-gradient(180deg, #f4f8f2 0%, #e6ede4 100%) !important;
 }
 
 body.app.dark {
@@ -929,6 +942,19 @@ body.app.dark {
   --accent-glow: 0 8px 24px rgba(134, 197, 160, 0.12) !important;
   --tag-bg: #263a33 !important;
   --tag-text: #bdd6c3 !important;
+
+  /* Section-Specific Backgrounds - Dark Mode */
+  --home-bg: linear-gradient(120deg, #172422 0%, #101718 68%, #15201f 100%) !important;
+  --about-bg: transparent !important;
+  --experience-bg: transparent !important;
+  --projects-bg: linear-gradient(180deg, #131d1d 0%, #0e1616 100%) !important;
+  --tech-bg: linear-gradient(180deg, #091212 0%, #050b0b 100%) !important;
+  --tech-grid: radial-gradient(rgba(134, 197, 160, 0.14) 0.8px, transparent 0.8px) !important;
+  --tech-glow: radial-gradient(circle at 50% 0%, rgba(134, 197, 160, 0.14) 0%, transparent 68%) !important;
+  --tech-card-bg: rgba(20, 34, 31, 0.88) !important;
+  --tech-card-border: rgba(134, 197, 160, 0.24) !important;
+  --thought-bg: #152220 !important;
+  --contact-bg: linear-gradient(180deg, #111a1a 0%, #091010 100%) !important;
 }
 
 body.app.cyber {
@@ -957,6 +983,19 @@ body.app.cyber {
   --accent-glow: 0 8px 24px rgba(103, 221, 193, 0.13) !important;
   --tag-bg: #203d39 !important;
   --tag-text: #bceadd !important;
+
+  /* Section-Specific Backgrounds - Cyber Mode */
+  --home-bg: linear-gradient(125deg, #14272a 0%, #101921 64%, #172329 100%) !important;
+  --about-bg: transparent !important;
+  --experience-bg: transparent !important;
+  --projects-bg: linear-gradient(180deg, #111d26 0%, #0d161e 100%) !important;
+  --tech-bg: linear-gradient(180deg, #071018 0%, #03080c 100%) !important;
+  --tech-grid: radial-gradient(rgba(103, 221, 193, 0.18) 0.8px, transparent 0.8px) !important;
+  --tech-glow: radial-gradient(circle at 50% 0%, rgba(103, 221, 193, 0.18) 0%, transparent 68%) !important;
+  --tech-card-bg: rgba(16, 32, 40, 0.9) !important;
+  --tech-card-border: rgba(103, 221, 193, 0.34) !important;
+  --thought-bg: #13232b !important;
+  --contact-bg: linear-gradient(180deg, #0f1922 0%, #070e14 100%) !important;
 }
 
 body.app,
@@ -975,16 +1014,71 @@ body.app .navbar {
   box-shadow: var(--shadow-soft) !important;
 }
 
+/* Zone 1: Home to Experience unified background */
+body.app .heroSplitStage {
+  background: var(--home-bg) !important;
+}
+
+body.app .about {
+  background: var(--about-bg) !important;
+}
+
+body.app .experience {
+  background: var(--experience-bg) !important;
+}
+
+/* Zone 2: Projects Showcase */
+body.app .projectSection {
+  background: var(--projects-bg) !important;
+  border-top: 1px solid var(--border) !important;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+/* Zone 3: Tech Stack - Distinctive Technical Laboratory Atmosphere */
+body.app .tech-section {
+  position: relative;
+  background-color: var(--tech-bg) !important;
+  background-image: var(--tech-glow), var(--tech-grid), var(--tech-bg) !important;
+  background-size: 100% 100%, 18px 18px, auto !important;
+  border-top: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+body.app .tech-section .skillGroup {
+  background: var(--tech-card-bg) !important;
+  border-color: var(--tech-card-border) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
+}
+
+body.app .tech-section .skillGroup:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16) !important;
+}
+
+/* Zone 4: Daily Thought */
+body.app .dailyThought {
+  background: var(--thought-bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+  transition: background 0.35s ease;
+}
+
+/* Zone 5: Contact */
+body.app .contact {
+  background: var(--contact-bg) !important;
+  transition: background 0.35s ease;
+}
+
 body.app .aboutCard,
 body.app .expCard,
-body.app .skillGroup,
 body.app .projectCard,
 body.app .contactCard {
   background: var(--card-bg) !important;
   box-shadow: var(--shadow-soft) !important;
 }
 
-body.app .dailyThought { background: var(--section-bg) !important; }
 body.app .portfolioViews { background: var(--card-bg) !important; }
 body.app .heroSplitStage .photoCard { border-color: var(--border-strong) !important; }
 
@@ -1023,6 +1117,7 @@ body.app .researchScene {
   margin: 0 auto;
   overflow: hidden;
   isolation: isolate;
+  touch-action: pan-y;
 }
 
 body.app .researchScene::before {
@@ -1045,6 +1140,7 @@ body.app .researchSceneCanvas {
   height: 100%;
   outline: 0;
   pointer-events: none;
+  touch-action: pan-y;
 }
 
 body.app .researchSceneHeading,
