@@ -3616,20 +3616,44 @@ function ResearchPreloader({ sceneReady, onComplete }) {
 }
 
 
+
 export default function Home({ mode = "light", setMode = () => {} }) {
   const [sceneReady, setSceneReady] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const onSceneReady = useCallback(() => setSceneReady(true), []);
   const onLoadingComplete = useCallback(() => setLoading(false), []);
 
+  // Display the full-screen loader only on the first visit
+  // in the current browser tab.
   useEffect(() => {
-    if (!loading) return undefined;
+    const key = "portfolio-visited";
+
+    try {
+      if (sessionStorage.getItem(key)) {
+        setLoading(false);
+        return;
+      }
+
+      sessionStorage.setItem(key, "true");
+    } catch {
+      // If session storage is unavailable, allow normal loading.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!loading) return;
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
       document.body.style.overflow = previousOverflow;
     };
   }, [loading]);
+
+  // Keep the rest of your existing Home component below this point.
+
 
   useEffect(() => {
     // Always open a fresh reload at Home rather than restoring an old hash.
