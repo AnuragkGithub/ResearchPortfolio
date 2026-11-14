@@ -390,6 +390,8 @@ function About() {
 function Navbar({ mode, setMode }) {
   const [timezone, setTimezone] = useState("Asia/Kolkata");
   const [now, setNow] = useState(null);
+  const [viewCount, setViewCount] = useState(null);
+  const [viewCountUnavailable, setViewCountUnavailable] = useState(false);
 
   const timezones = [
     { id: "Asia/Kolkata", label: "India", short: "IST" },
@@ -405,6 +407,39 @@ function Navbar({ mode, setMode }) {
     setNow(new Date());
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadViewCount() {
+      try {
+        const response = await fetch("/api/views", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`View counter request failed (${response.status})`);
+        }
+
+        const result = await response.json();
+        if (!Number.isSafeInteger(result.count) || result.count < 0) {
+          throw new Error("View counter returned an invalid count");
+        }
+
+        setViewCount(result.count);
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        console.error("Could not load portfolio views:", error);
+        setViewCountUnavailable(true);
+      }
+    }
+
+    loadViewCount();
+    return () => controller.abort();
   }, []);
 
   const formattedTime = now
@@ -470,6 +505,30 @@ function Navbar({ mode, setMode }) {
               <small>{zone.short}</small>
             </button>
           ))}
+        </div>
+      </div>
+
+      <div
+        className="portfolioViews"
+        aria-live="polite"
+        aria-label={
+          viewCount !== null
+            ? `${viewCount.toLocaleString()} portfolio views`
+            : viewCountUnavailable
+              ? "Portfolio views unavailable"
+              : "Portfolio views loading"
+        }
+      >
+        <div className="portfolioViewsInner">
+          <span className="portfolioViewsLabel">VIEWS</span>
+          <strong className="portfolioViewsCount">
+            {viewCount !== null
+              ? viewCount.toLocaleString()
+              : viewCountUnavailable
+                ? "—"
+                : "..."}
+          </strong>
+          <span className="portfolioViewsCaption">total</span>
         </div>
       </div>
 
@@ -1437,41 +1496,6 @@ function DeveloperConsole() {
 
 function Hero() {
   const name = "ANURAG KARMAKAR";
-  const [viewCount, setViewCount] = useState(null);
-  const [viewCountUnavailable, setViewCountUnavailable] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadViewCount() {
-      try {
-        const response = await fetch("/api/views", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: "{}",
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`View counter request failed (${response.status})`);
-        }
-
-        const result = await response.json();
-        if (!Number.isSafeInteger(result.count) || result.count < 0) {
-          throw new Error("View counter returned an invalid count");
-        }
-
-        setViewCount(result.count);
-      } catch (error) {
-        if (error.name === "AbortError") return;
-        console.error("Could not load portfolio views:", error);
-        setViewCountUnavailable(true);
-      }
-    }
-
-    loadViewCount();
-    return () => controller.abort();
-  }, []);
 
   return (
     <>
@@ -1489,25 +1513,6 @@ function Hero() {
                   <div className="badge">
                     <span className="badge-dot" />
                     SOFTWARE ENGINEER • APPLIED RESEARCHER
-                  </div>
-                  <div
-                    className="heroViews"
-                    aria-live="polite"
-                    aria-label={
-                      viewCount === null
-                        ? "Portfolio views"
-                        : `${viewCount.toLocaleString()} portfolio views`
-                    }
-                  >
-                    <span className="heroViewsDot" aria-hidden="true" />
-                    <span>VIEWS</span>
-                    <strong>
-                      {viewCount !== null
-                        ? viewCount.toLocaleString()
-                        : viewCountUnavailable
-                          ? "Unavailable"
-                          : "Loading"}
-                    </strong>
                   </div>
                 </div>
 
@@ -1724,37 +1729,6 @@ function Hero() {
           border-radius: 50%;
           background: var(--accent);
           box-shadow: 0 0 12px var(--accent);
-        }
-
-        .heroViews {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          min-height: 34px;
-          padding: 7px 12px;
-          border: 1px solid var(--border);
-          border-radius: 999px;
-          background: var(--panel);
-          color: var(--text-muted);
-          font-size: 9px;
-          font-weight: 800;
-          letter-spacing: 1.2px;
-          backdrop-filter: blur(14px);
-        }
-
-        .heroViewsDot {
-          width: 6px;
-          height: 6px;
-          flex: 0 0 6px;
-          border-radius: 50%;
-          background: var(--accent);
-          box-shadow: 0 0 10px var(--accent);
-        }
-
-        .heroViews strong {
-          color: var(--text);
-          font-size: 11px;
-          letter-spacing: 0;
         }
 
         .name-container {
@@ -2823,38 +2797,6 @@ function useAnimations() {
 
 
 export default function Home({ mode = "light", setMode = () => {} }) {
-  const [introProgress, setIntroProgress] = useState(0);
-  const [showIntro, setShowIntro] = useState(true);
-  const [introComplete, setIntroComplete] = useState(false);
-
-  useEffect(() => {
-    let animationFrame;
-    let hideTimeout;
-    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? 250
-      : 1700;
-    const startedAt = performance.now();
-
-    function updateProgress(now) {
-      const progress = Math.min(((now - startedAt) / duration) * 100, 100);
-      setIntroProgress(Math.floor(progress));
-
-      if (progress < 100) {
-        animationFrame = requestAnimationFrame(updateProgress);
-      } else {
-        setIntroComplete(true);
-        hideTimeout = window.setTimeout(() => setShowIntro(false), 350);
-      }
-    }
-
-    animationFrame = requestAnimationFrame(updateProgress);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-      window.clearTimeout(hideTimeout);
-    };
-  }, []);
-
   useEffect(() => {
     const hash = window.location.hash;
 
@@ -2867,28 +2809,6 @@ export default function Home({ mode = "light", setMode = () => {} }) {
   }, []);
   return (
     <div className={`app ${mode}`}>
-      {showIntro && (
-        <div
-          className={`portfolioIntroLoader${introComplete ? " is-complete" : ""}`}
-          role="progressbar"
-          aria-label="Loading portfolio"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={introProgress}
-        >
-          <div className="portfolioIntroContent">
-            <span className="portfolioIntroEyebrow">RESEARCH / ENGINEERING</span>
-            <div className="portfolioIntroName">ANURAG KARMAKAR</div>
-            <div className="portfolioIntroProgress">
-              <span>LOADING PORTFOLIO</span>
-              <strong>{introProgress}%</strong>
-            </div>
-            <div className="portfolioIntroTrack" aria-hidden="true">
-              <span style={{ width: `${introProgress}%` }} />
-            </div>
-          </div>
-        </div>
-      )}
       <style jsx global>{":root {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #090a12 100%);\n  --panel: rgba(255, 255, 255, 0.06);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --surface: rgba(255, 255, 255, 0.06);\n  --surface-soft: rgba(255, 255, 255, 0.03);\n  --glass: rgba(255, 255, 255, 0.08);\n  --border: rgba(255, 255, 255, 0.1);\n  --border-strong: rgba(255, 255, 255, 0.16);\n  --text: #eef2ff;\n  --text-muted: rgba(238, 242, 255, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #a855f7;\n  --accent-soft: #83c5fd;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.45);\n  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.18);\n  --stroke: rgba(255, 255, 255, 0.06);\n  --card-bg: rgba(255, 255, 255, 0.04);\n  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.18);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: var(--text-muted);\n  --tag-bg: rgba(255, 255, 255, 0.08);\n  --tag-text: var(--text-muted);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  width: 100%;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  width: 100%;\n  overflow-x: clip;\n  min-height: 100vh;\n  font-family: var(--font-sans);\n  color: var(--text);\n  background: var(--bg);\n  transition: background 0.35s ease, color 0.35s ease;\n}\n\nbody.app {\n  background: var(--bg);\n  color: var(--text);\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n}\n\nbutton {\n  font: inherit;\n}\n\nimg,\nvideo {\n  max-width: 100%;\n  display: block;\n}\n\n#__next {\n  min-height: 100vh;\n  overflow-x: clip;\n}\n\n.section-padding {\n  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);\n}\n\n@media (max-width: 640px) {\n  .section-padding {\n    padding: 4.5rem 1rem;\n  }\n}\n\nbody.app.cyber {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);\n  --panel: rgba(255, 255, 255, 0.05);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --text: #f3f4ff;\n  --text-muted: rgba(243, 244, 255, 0.72);\n  --border: rgba(56, 189, 248, 0.28);\n  --accent: #38bdf8;\n  --accent-strong: #c084fc;\n  --accent-soft: #0ea5e9;\n  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.28);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.18);\n  --accent-secondary: rgba(243, 244, 255, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(243, 244, 255, 0.72);\n}\n\nbody.app.dark {\n  --bg: #05060e;\n  --bg-gradient: linear-gradient(135deg, #05060e 0%, #0d1322 100%);\n  --panel: rgba(15, 23, 42, 0.78);\n  --panel-strong: rgba(255, 255, 255, 0.08);\n  --surface: rgba(15, 23, 42, 0.62);\n  --surface-soft: rgba(15, 23, 42, 0.35);\n  --glass: rgba(255, 255, 255, 0.06);\n  --border: rgba(255, 255, 255, 0.12);\n  --text: #f8fafc;\n  --text-muted: rgba(248, 250, 252, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #7c3aed;\n  --accent-soft: #60a5fa;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.22);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: rgba(248, 250, 252, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(248, 250, 252, 0.72);\n}\n\nbody.app.light {\n  --bg: #f4f6fb;\n  --bg-gradient: linear-gradient(135deg, #edf2ff 0%, #e2e8f0 100%);\n  --panel: rgba(255, 255, 255, 0.94);\n  --panel-strong: rgba(255, 255, 255, 0.98);\n  --text: #0f172a;\n  --text-muted: rgba(15, 23, 42, 0.68);\n  --border: rgba(15, 23, 42, 0.12);\n  --accent: #2563eb;\n  --accent-strong: #475569;\n  --accent-soft: #94a3b8;\n  --shadow: 0 35px 100px rgba(15, 23, 42, 0.18);\n  --card-bg: rgba(255, 255, 255, 0.95);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(37, 99, 235, 0.18);\n  --accent-glow: 0 12px 30px rgba(37, 99, 235, 0.14);\n  --accent-secondary: rgba(15, 23, 42, 0.72);\n  --tag-bg: rgba(15, 23, 42, 0.08);\n  --tag-text: rgba(15, 23, 42, 0.72);\n}\n\nbody.app.light a,\nbody.app.light button,\nbody.app.light .logo {\n  color: #111111 !important;\n}\n\nbody.app.light .navbar {\n  background: rgba(255, 255, 255, 0.92);\n  border-color: rgba(0, 0, 0, 0.08);\n}\n\nbody.app.dark .navbar {\n  background: rgba(10, 10, 15, 0.95);\n  border-color: rgba(255, 255, 255, 0.08);\n}\n\nbody.app.cyber .navbar {\n  background: rgba(7, 7, 10, 0.92);\n  border-color: rgba(56, 189, 248, 0.18);\n}\n"}</style>
       <div className="portfolioAppContent">
         <Navbar mode={mode} setMode={setMode} />

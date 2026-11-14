@@ -1,6 +1,6 @@
 # Portfolio View Counter Setup
 
-The counter records unique browsers in a shared Supabase database using an anonymous, server-set cookie. It does not identify people, and clearing the cookie or using another browser can count as a new view.
+The counter records page loads in a shared Supabase database. Repeated visits count again; it does not identify unique people. The total appears in the fixed navigation bar.
 
 ## Deploy the database schema
 

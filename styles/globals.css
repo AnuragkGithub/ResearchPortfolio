@@ -76,74 +76,6 @@ video {
   overflow-x: clip;
 }
 
-.portfolioIntroLoader {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background:
-    radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
-    var(--bg-gradient);
-  color: var(--text);
-  opacity: 1;
-  transition: opacity 350ms ease;
-}
-
-.portfolioIntroLoader.is-complete {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.portfolioIntroContent {
-  width: min(440px, 100%);
-}
-
-.portfolioIntroEyebrow,
-.portfolioIntroProgress {
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-}
-
-.portfolioIntroName {
-  margin: 18px 0 42px;
-  font-size: clamp(1.7rem, 7vw, 3rem);
-  font-weight: 900;
-  letter-spacing: -0.07em;
-}
-
-.portfolioIntroProgress {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.portfolioIntroProgress strong {
-  color: var(--accent);
-  font-size: 1.1rem;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-}
-
-.portfolioIntroTrack {
-  height: 2px;
-  margin-top: 12px;
-  overflow: hidden;
-  background: var(--border);
-}
-
-.portfolioIntroTrack span {
-  display: block;
-  height: 100%;
-  background: var(--accent);
-  box-shadow: 0 0 16px var(--accent);
-  transition: width 80ms linear;
-}
-
 .section-padding {
   padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);
 }
@@ -581,7 +513,7 @@ body.app .contact { min-height: 68vh; }
 @media (max-width: 760px) {
   body.app .navbar {
     display: grid !important;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-rows: auto auto;
     top: 10px !important;
     width: calc(100% - 24px) !important;
@@ -590,7 +522,7 @@ body.app .contact { min-height: 68vh; }
   }
 
   body.app .navbar .clockWrap { grid-column: 1; grid-row: 1; }
-  body.app .navbar .portfolioViews { grid-column: 2 / 4; grid-row: 1; justify-self: end; }
+  body.app .navbar .portfolioViews { grid-column: 2; grid-row: 1; justify-self: center; }
   body.app .navbar .clockButton { padding: 6px !important; }
   body.app .navbar .zoneName,
   body.app .navbar .clockChevron { display: none; }
@@ -623,10 +555,10 @@ body.app .contact { min-height: 68vh; }
 
 @media (max-width: 520px) {
   body.app .heroSplitStage .name-container { font-size: 42px !important; }
-  body.app .navbar { grid-template-columns: minmax(0, 1fr) auto; }
+  body.app .navbar { grid-template-columns: minmax(0, 1fr) auto auto; }
   body.app .navbar .clockWrap { display: none; }
-  body.app .navbar .portfolioViews { grid-column: 1; grid-row: 1; justify-self: center; }
-  body.app .navbar .modeControl { grid-column: 2; grid-row: 1; }
+  body.app .navbar .portfolioViews { grid-column: 2; grid-row: 1; justify-self: center; }
+  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
   body.app .navbar .links { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; width: 100%; }
 }
 
@@ -877,16 +809,16 @@ body.app .modeControl select {
 }
 
 @media (max-width: 520px) {
-  body.app .navbar { grid-template-columns: minmax(0, 1fr) auto; }
+  body.app .navbar { grid-template-columns: minmax(0, 1fr) auto auto; }
   body.app .navbar .clockWrap { display: none; }
   body.app .navbar .portfolioViews {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
-    justify-self: start;
+    justify-self: center;
   }
   body.app .navbar .portfolioViewsLabel { font-size: 8px; letter-spacing: 0.6px; }
   body.app .navbar .portfolioViewsCaption { font-size: 9px; }
-  body.app .navbar .modeControl { grid-column: 2; grid-row: 1; }
+  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
   body.app .navbar .modeControl select { max-width: 105px; }
   body.app .navbar .links { grid-column: 1 / -1; grid-row: 2; }
 }
@@ -1011,14 +943,15 @@ body.app .researchSceneCoreLabel {
 @media (min-width: 761px) and (max-width: 1080px) {
   body.app .navbar {
     display: grid !important;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     row-gap: 2px;
   }
 
-  body.app .navbar .clockWrap { grid-column: 1; grid-row: 1; }
-  body.app .navbar .portfolioViews { grid-column: 2; grid-row: 1; justify-self: center; }
-  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
+  body.app .navbar .navBrand { grid-column: 1; grid-row: 1; }
+  body.app .navbar .clockWrap { grid-column: 2; grid-row: 1; }
+  body.app .navbar .portfolioViews { grid-column: 3; grid-row: 1; justify-self: center; }
+  body.app .navbar .modeControl { grid-column: 4; grid-row: 1; }
   body.app .navbar .links {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -1799,14 +1732,15 @@ body.app .customCursor.is-pressed { transform: translate3d(var(--cursor-x, -100p
 @media (max-width: 1080px) and (min-width: 761px) {
   body.app .navbar {
     display: grid !important;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     row-gap: 3px;
   }
 
   body.app .navbar .navBrand { grid-column: 1; grid-row: 1; }
   body.app .navbar .clockWrap { grid-column: 2; grid-row: 1; justify-self: center; }
-  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
+  body.app .navbar .portfolioViews { grid-column: 3; grid-row: 1; justify-self: center; }
+  body.app .navbar .modeControl { grid-column: 4; grid-row: 1; }
   body.app .navbar .links {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -1820,7 +1754,7 @@ body.app .customCursor.is-pressed { transform: translate3d(var(--cursor-x, -100p
     top: 10px !important;
     width: calc(100% - 24px) !important;
     min-height: 0;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-rows: auto auto;
     padding: 8px 10px !important;
     gap: 4px 10px;
@@ -1828,7 +1762,8 @@ body.app .customCursor.is-pressed { transform: translate3d(var(--cursor-x, -100p
 
   body.app .navbar .navBrand { grid-column: 1; grid-row: 1; }
   body.app .navbar .clockWrap { display: none; }
-  body.app .navbar .modeControl { grid-column: 2; grid-row: 1; }
+  body.app .navbar .portfolioViews { grid-column: 2; grid-row: 1; justify-self: center; }
+  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
   body.app .navbar .modeControl > span { display: none; }
   body.app .navbar .links {
     grid-column: 1 / -1;
@@ -1881,6 +1816,13 @@ body.app .customCursor.is-pressed { transform: translate3d(var(--cursor-x, -100p
   body.app .consoleFocus { gap: 12px; min-height: 160px; }
   body.app .consolePipeline ol { gap: 7px; }
   body.app .consolePipeline li { font-size: 9px; }
+}
+
+@media (max-width: 360px) {
+  body.app .navBrandName { display: none; }
+  body.app .navbar .portfolioViewsInner { gap: 5px; }
+  body.app .navbar .portfolioViewsCount { font-size: 17px; }
+  body.app .navbar .portfolioViewsCaption { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
