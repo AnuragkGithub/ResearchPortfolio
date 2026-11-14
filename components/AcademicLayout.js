@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const timeZones = [
   { label: "Asia/Kolkata", value: "Asia/Kolkata" },
@@ -73,11 +74,11 @@ export default function AcademicLayout({ children }) {
         </div>
 
         <nav className="mainLinks">
-          <a href="/#home">Overview</a>
-          <a href="/#projects">Research</a>
-          <a href="/#experience">Experience</a>
-          <a href="/#tech">Methods</a>
-          <a href="/#contact">Contact</a>
+          <Link href="/#home">Overview</Link>
+          <Link href="/#projects">Research</Link>
+          <Link href="/#experience">Experience</Link>
+          <Link href="/#tech">Methods</Link>
+          <Link href="/#contact">Contact</Link>
 
           <details className="academicDropdown">
             <summary>Academic +</summary>
@@ -105,9 +106,9 @@ export default function AcademicLayout({ children }) {
               </a>
               <div className="menuDivider" />
               {links.map(([label, href]) => (
-                <a href={href} key={href}>
+                <Link href={href} key={href}>
                   {label}
-                </a>
+                </Link>
               ))}
             </div>
           </details>
@@ -321,6 +322,11 @@ export default function AcademicLayout({ children }) {
           .sharedNavbar {
             top: 8px;
             padding: 12px;
+          }
+
+          .academicMenu {
+            left: 0;
+            right: auto;
           }
 
           .navStatus {

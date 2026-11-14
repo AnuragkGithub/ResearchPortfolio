@@ -2,7 +2,8 @@
 // Place this file at pages/index.js. Keep package.json and Next.js configuration.
 // Required packages from the existing project: react, gsap, lenis, next.
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Lenis from "lenis";
@@ -528,9 +529,9 @@ function Navbar({ mode, setMode }) {
             <a href="https://www.researchgate.net/profile/Anurag-Karmakar" target="_blank" rel="noreferrer">ResearchGate</a>
             <a href="https://adamas.academia.edu/ANURAGKarmakar" target="_blank" rel="noreferrer">Academia.edu</a>
             <span className="academicMenuLabel academicMenuDivider">MORE</span>
-            <a href="/subjects-taught">Subjects Taught</a>
-            <a href="/notes">Notes</a>
-            <a href="/exploration">Exploration</a>
+            <Link href="/subjects-taught">Subjects Taught</Link>
+            <Link href="/notes">Notes</Link>
+            <Link href="/exploration">Exploration</Link>
           </div>
         </details>
       </div>
@@ -1199,23 +1200,51 @@ function DailyThought() {
     "Curiosity starts the work; reproducibility lets others trust it.",
     "A prototype is a question made tangible.",
     "Scientific thinking pairs imagination with evidence.",
+    "A clear baseline is often the first meaningful result.",
+    "Reliable systems are designed around the ways they can fail.",
+    "Good data work makes every transformation easier to question.",
+    "Small experiments turn strong opinions into testable ideas.",
+    "Make the useful path obvious, and the risky path difficult.",
+    "A result becomes more valuable when someone else can reproduce it.",
+    "The best tools leave people with more time to think.",
   ];
-  const dayNumber = Math.floor(Date.now() / 86400000);
+  const [now, setNow] = useState(null);
+
+  useEffect(() => {
+    const updateTime = () => setNow(new Date());
+    updateTime();
+    const timer = window.setInterval(updateTime, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const dayNumber = now
+    ? Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000)
+    : 0;
   const thought = thoughts[dayNumber % thoughts.length];
-  const date = new Date(dayNumber * 86400000).toISOString().slice(0, 10);
-  const formattedDate = new Intl.DateTimeFormat("en", {
-    dateStyle: "long",
-    timeZone: "UTC",
-  }).format(new Date(dayNumber * 86400000));
+  const formattedDate = now
+    ? new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(now)
+    : "A new note every day";
+  const formattedTime = now
+    ? new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }).format(now)
+    : "--:--:--";
 
   return (
     <section className="dailyThought section-padding" aria-labelledby="daily-thought-title">
       <div className="dailyThoughtInner">
         <div className="dailyThoughtMeta">
-          <span id="daily-thought-title">TODAY'S FIELD NOTE</span>
-          <time dateTime={date}>{formattedDate}</time>
+          <span id="daily-thought-title">TODAY'S FIELD NOTE / UPDATES DAILY</span>
+          <div className="dailyThoughtTime">
+            <time dateTime={now?.toISOString()}>{formattedDate}</time>
+            <time dateTime={now?.toISOString()} aria-label="Your local time">
+              {formattedTime}
+            </time>
+          </div>
         </div>
-        <blockquote>{thought}</blockquote>
+        <blockquote aria-live="polite">{thought}</blockquote>
         <span className="dailyThoughtByline">A note on inquiry, evidence, and making.</span>
       </div>
     </section>
@@ -2278,7 +2307,7 @@ function Portfolio3D({ mode = "light", playing = false }) {
   );
 }
 // ================= Hero.js (custom split-screen landing) =================
-function Hero({ mode, onSceneReady, playing }) {
+function Hero({ mode, playing }) {
   const name = "ANURAG KARMAKAR";
 
   return (
@@ -3061,10 +3090,17 @@ const projects = [
 
 function ProjectShowcase() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const categories = ["All", "AI & Data", "Analytics", "Automation", "Platforms", "Web apps"];
-  const visibleProjects = activeCategory === "All"
-    ? projects
-    : projects.filter((project) => project.category === activeCategory);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleProjects = projects.filter((project) => {
+    const matchesCategory =
+      activeCategory === "All" || project.category === activeCategory;
+    const searchableText =
+      `${project.title} ${project.category} ${project.desc}`.toLowerCase();
+
+    return matchesCategory && searchableText.includes(normalizedQuery);
+  });
 
   return (
     <section id="projects" className="projectSection">
@@ -3078,6 +3114,28 @@ function ProjectShowcase() {
       </div>
 
       <div className="projectBrowse">
+        <div className="projectSearch" role="search">
+          <label className="visuallyHidden" htmlFor="project-search-input">
+            Search projects
+          </label>
+          <input
+            id="project-search-input"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search projects, topics, or tools"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="clearProjectSearch"
+              aria-label="Clear project search"
+              onClick={() => setSearchQuery("")}
+            >
+              Clear
+            </button>
+          )}
+        </div>
         <div className="projectFilters" role="group" aria-label="Filter projects by category">
           {categories.map((category) => (
             <button
@@ -3111,6 +3169,11 @@ function ProjectShowcase() {
             <span className="projectLink">View source on GitHub <span aria-hidden="true">↗</span></span>
           </a>
         ))}
+        {visibleProjects.length === 0 && (
+          <p className="projectEmptyState" role="status">
+            No projects match that search. Try another term or category.
+          </p>
+        )}
       </div>
 
       <style jsx>{`
@@ -3183,6 +3246,53 @@ function ProjectShowcase() {
           text-align: center;
         }
 
+        .projectSearch {
+          display: flex;
+          width: min(100%, 520px);
+          min-height: 46px;
+          margin: 0 auto 18px;
+          align-items: center;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          background: var(--panel);
+        }
+
+        .projectSearch:focus-within {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+        }
+
+        .projectSearch input {
+          width: 100%;
+          min-width: 0;
+          padding: 12px 14px;
+          border: 0;
+          outline: 0;
+          background: transparent;
+          color: var(--text);
+          font: inherit;
+          font-size: 0.9rem;
+        }
+
+        .projectSearch input::placeholder {
+          color: var(--text-muted);
+        }
+
+        .clearProjectSearch {
+          margin-right: 8px;
+          padding: 7px 9px;
+          border: 0;
+          border-radius: 4px;
+          background: transparent;
+          color: var(--accent);
+          font-size: 0.8rem;
+          cursor: pointer;
+        }
+
+        .clearProjectSearch:hover {
+          background: var(--surface-soft);
+        }
+
         .projectFilters {
           display: flex;
           flex-wrap: wrap;
@@ -3214,6 +3324,16 @@ function ProjectShowcase() {
           margin: 12px 0 0;
           color: var(--text-muted);
           font-size: 0.82rem;
+        }
+
+        .projectEmptyState {
+          grid-column: 1 / -1;
+          margin: 0;
+          padding: 32px 20px;
+          border: 1px dashed var(--border);
+          border-radius: 8px;
+          color: var(--text-muted);
+          text-align: center;
         }
        .my-work-title {
   font-size: 4.6rem;
@@ -3480,198 +3600,25 @@ function useAnimations() {
 }
 
 
-function ResearchPreloader({ sceneReady, onComplete }) {
-  const [progress, setProgress] = useState(0);
-  const [paintReady, setPaintReady] = useState(false);
-  const [fontsReady, setFontsReady] = useState(false);
-  const [minimumElapsed, setMinimumElapsed] = useState(false);
-  const [fallbackReady, setFallbackReady] = useState(false);
-  const progressRef = useRef(0);
-
-  useEffect(() => {
-    let active = true;
-    let firstFrame = 0;
-    let secondFrame = 0;
-    const minimumTimer = window.setTimeout(() => setMinimumElapsed(true), 2100);
-    const fallbackTimer = window.setTimeout(() => {
-      setFallbackReady(true);
-      setPaintReady(true);
-      setFontsReady(true);
-    }, 5000);
-
-    firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(() => {
-        if (active) setPaintReady(true);
-      });
-    });
-
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(() => {
-        if (active) setFontsReady(true);
-      }).catch(() => {
-        if (active) setFontsReady(true);
-      });
-    } else {
-      setFontsReady(true);
-    }
-
-    return () => {
-      active = false;
-      window.cancelAnimationFrame(firstFrame);
-      window.cancelAnimationFrame(secondFrame);
-      window.clearTimeout(minimumTimer);
-      window.clearTimeout(fallbackTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-  let timer = 0;
-
-  const advance = () => {
-    const current = progressRef.current;
-
-    // Smooth continuous loading: 0 → 100
-    const next = Math.min(100, current + 1);
-
-    progressRef.current = next;
-    setProgress(next);
-
-    if (next >= 100) {
-      window.clearInterval(timer);
-    }
-  };
-
-  timer = window.setInterval(advance, 24);
-
-  return () => window.clearInterval(timer);
-}, []);
-
-  useEffect(() => {
-    if (progress < 100) return undefined;
-    const timer = window.setTimeout(onComplete, 380);
-    return () => window.clearTimeout(timer);
-  }, [progress, onComplete]);
-
-  const stage = progress < 18
-    ? "WAKING THE LAB"
-    : progress < 42
-      ? "ALIGNING FIELD NOTES"
-      : progress < 78
-        ? "BUILDING THE RESEARCH SCENE"
-        : progress < 98
-          ? "CHECKING SIGNALS"
-          : "READY TO EXPLORE";
-
-  return (
-    <div className="researchLoader" aria-busy={progress < 100}>
-      <div className="researchLoaderFrame">
-        <header className="researchLoaderHeader">
-          <span>AK <i>/</i> RESEARCH PORTFOLIO</span>
-          <span>INITIALIZATION / 01</span>
-        </header>
-
-        <main className="researchLoaderMain">
-          <div className="loaderInstrument" aria-hidden="true">
-            <span className="loaderOrbit loaderOrbitOne" />
-            <span className="loaderOrbit loaderOrbitTwo" />
-            <span className="loaderAxis loaderAxisHorizontal" />
-            <span className="loaderAxis loaderAxisVertical" />
-            <span className="loaderInstrumentCore">AK</span>
-            <i className="loaderSignal loaderSignalOne" />
-            <i className="loaderSignal loaderSignalTwo" />
-            <i className="loaderSignal loaderSignalThree" />
-          </div>
-
-          <p className="researchLoaderEyebrow">A FIELD IN MOTION</p>
-          <h1>Entering the<br />research field.</h1>
-          <p className="researchLoaderDescription">
-            Preparing the models, evidence, and ideas behind the work.
-          </p>
-
-          <div className="researchLoaderReadout">
-            <span aria-live="polite">{stage}</span>
-            <span
-              className="researchLoaderPercent"
-              role="progressbar"
-              aria-label="Portfolio loading progress"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow={Math.floor(progress)}
-            >
-              {Math.floor(progress).toString().padStart(2, "0")}%
-            </span>
-          </div>
-          <div className="researchLoaderTrack" aria-hidden="true">
-            <span style={{ width: `${progress}%` }} />
-          </div>
-        </main>
-
-        <footer className="researchLoaderFooter">
-          <span>APPLIED AI / CYBERSECURITY / DATA SYSTEMS</span>
-          <span>ESTABLISHING CONNECTION</span>
-        </footer>
-      </div>
-    </div>
-  );
-}
-
-
-
 export default function Home({ mode = "light", setMode = () => {} }) {
-  const [sceneReady, setSceneReady] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const onSceneReady = useCallback(() => setSceneReady(true), []);
-  const onLoadingComplete = useCallback(() => setLoading(false), []);
-
-  // Display the full-screen loader only on the first visit
-  // in the current browser tab.
   useEffect(() => {
-    const key = "portfolio-visited";
-
-    try {
-      if (sessionStorage.getItem(key)) {
-        setLoading(false);
-        return;
-      }
-
-      sessionStorage.setItem(key, "true");
-    } catch {
-      // If session storage is unavailable, allow normal loading.
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!loading) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [loading]);
-
-  // Keep the rest of your existing Home component below this point.
-
-
-  useEffect(() => {
-    // Always open a fresh reload at Home rather than restoring an old hash.
     const hash = window.location.hash;
-    if (hash !== "#home") {
+
+    if (!hash) {
       window.history.replaceState(null, "", "#home");
+      window.scrollTo(0, 0);
+    } else if (hash === "#home") {
+      window.scrollTo(0, 0);
     }
-    window.scrollTo(0, 0);
   }, []);
   return (
     <div className={`app ${mode}`}>
       <style jsx global>{":root {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #090a12 100%);\n  --panel: rgba(255, 255, 255, 0.06);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --surface: rgba(255, 255, 255, 0.06);\n  --surface-soft: rgba(255, 255, 255, 0.03);\n  --glass: rgba(255, 255, 255, 0.08);\n  --border: rgba(255, 255, 255, 0.1);\n  --border-strong: rgba(255, 255, 255, 0.16);\n  --text: #eef2ff;\n  --text-muted: rgba(238, 242, 255, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #a855f7;\n  --accent-soft: #83c5fd;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.45);\n  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.18);\n  --stroke: rgba(255, 255, 255, 0.06);\n  --card-bg: rgba(255, 255, 255, 0.04);\n  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.18);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: var(--text-muted);\n  --tag-bg: rgba(255, 255, 255, 0.08);\n  --tag-text: var(--text-muted);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  width: 100%;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  width: 100%;\n  overflow-x: clip;\n  min-height: 100vh;\n  font-family: var(--font-sans);\n  color: var(--text);\n  background: var(--bg);\n  transition: background 0.35s ease, color 0.35s ease;\n}\n\nbody.app {\n  background: var(--bg);\n  color: var(--text);\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n}\n\nbutton {\n  font: inherit;\n}\n\nimg,\nvideo {\n  max-width: 100%;\n  display: block;\n}\n\n#__next {\n  min-height: 100vh;\n  overflow-x: clip;\n}\n\n.section-padding {\n  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);\n}\n\n@media (max-width: 640px) {\n  .section-padding {\n    padding: 4.5rem 1rem;\n  }\n}\n\nbody.app.cyber {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);\n  --panel: rgba(255, 255, 255, 0.05);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --text: #f3f4ff;\n  --text-muted: rgba(243, 244, 255, 0.72);\n  --border: rgba(56, 189, 248, 0.28);\n  --accent: #38bdf8;\n  --accent-strong: #c084fc;\n  --accent-soft: #0ea5e9;\n  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.28);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.18);\n  --accent-secondary: rgba(243, 244, 255, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(243, 244, 255, 0.72);\n}\n\nbody.app.dark {\n  --bg: #05060e;\n  --bg-gradient: linear-gradient(135deg, #05060e 0%, #0d1322 100%);\n  --panel: rgba(15, 23, 42, 0.78);\n  --panel-strong: rgba(255, 255, 255, 0.08);\n  --surface: rgba(15, 23, 42, 0.62);\n  --surface-soft: rgba(15, 23, 42, 0.35);\n  --glass: rgba(255, 255, 255, 0.06);\n  --border: rgba(255, 255, 255, 0.12);\n  --text: #f8fafc;\n  --text-muted: rgba(248, 250, 252, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #7c3aed;\n  --accent-soft: #60a5fa;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.22);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: rgba(248, 250, 252, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(248, 250, 252, 0.72);\n}\n\nbody.app.light {\n  --bg: #f4f6fb;\n  --bg-gradient: linear-gradient(135deg, #edf2ff 0%, #e2e8f0 100%);\n  --panel: rgba(255, 255, 255, 0.94);\n  --panel-strong: rgba(255, 255, 255, 0.98);\n  --text: #0f172a;\n  --text-muted: rgba(15, 23, 42, 0.68);\n  --border: rgba(15, 23, 42, 0.12);\n  --accent: #2563eb;\n  --accent-strong: #475569;\n  --accent-soft: #94a3b8;\n  --shadow: 0 35px 100px rgba(15, 23, 42, 0.18);\n  --card-bg: rgba(255, 255, 255, 0.95);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(37, 99, 235, 0.18);\n  --accent-glow: 0 12px 30px rgba(37, 99, 235, 0.14);\n  --accent-secondary: rgba(15, 23, 42, 0.72);\n  --tag-bg: rgba(15, 23, 42, 0.08);\n  --tag-text: rgba(15, 23, 42, 0.72);\n}\n\nbody.app.light a,\nbody.app.light button,\nbody.app.light .logo {\n  color: #111111 !important;\n}\n\nbody.app.light .navbar {\n  background: rgba(255, 255, 255, 0.92);\n  border-color: rgba(0, 0, 0, 0.08);\n}\n\nbody.app.dark .navbar {\n  background: rgba(10, 10, 15, 0.95);\n  border-color: rgba(255, 255, 255, 0.08);\n}\n\nbody.app.cyber .navbar {\n  background: rgba(7, 7, 10, 0.92);\n  border-color: rgba(56, 189, 248, 0.18);\n}\n"}</style>
-      <div className={`portfolioAppContent ${loading ? "is-loading" : "is-ready"}`}
-  aria-hidden={loading}>
+      <div className="portfolioAppContent">
         <CustomCursor />
         <Navbar mode={mode} setMode={setMode} />
         <main>
-          <Hero mode={mode} onSceneReady={onSceneReady} playing={!loading} />
+          <Hero mode={mode} playing />
           <About />
           <Experience mode={mode} />
           <ProjectShowcase />
@@ -3680,9 +3627,6 @@ export default function Home({ mode = "light", setMode = () => {} }) {
           <Contact />
         </main>
       </div>
-      {loading && (
-        <ResearchPreloader sceneReady={sceneReady} onComplete={onLoadingComplete} />
-      )}
     </div>
   );
 }

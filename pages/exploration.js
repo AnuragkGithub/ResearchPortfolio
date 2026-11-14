@@ -1,4 +1,6 @@
 
+import Link from "next/link";
+
 const explorations = [
   {
     number: "01",
@@ -39,8 +41,8 @@ export default function Exploration() {
     <main className="explorationPage">
       <div className="explorationShell">
         <header className="explorationNav">
-          <a href="/">AK / RESEARCH PORTFOLIO</a>
-          <a href="/">Back to portfolio ↗</a>
+          <Link href="/">AK / RESEARCH PORTFOLIO</Link>
+          <Link href="/">Back to portfolio ↗</Link>
         </header>
 
         <section className="explorationHero">

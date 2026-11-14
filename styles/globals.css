@@ -85,28 +85,6 @@ video {
     padding: 4.5rem 1rem;
   }
 }
-.portfolioAppContent {
-  opacity: 1;
-  visibility: visible;
-}
-
-.portfolioAppContent.is-loading {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.portfolioAppContent.is-ready {
-  opacity: 1;
-  visibility: visible;
-}
-
-.researchLoader {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  visibility: visible;
-}
 body.app.cyber {
   --bg: #050509;
   --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);
@@ -595,244 +573,7 @@ body.app .contact { min-height: 68vh; }
   }
 }
 
-body.app .researchLoader {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  display: grid;
-  min-height: 100svh;
-  padding: 22px clamp(22px, 6vw, 88px);
-  overflow: auto;
-  background:
-    radial-gradient(ellipse at 50% 46%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 43%),
-    var(--bg);
-  color: var(--text);
-  animation: researchLoaderEnter 450ms ease-out both;
-}
-
 body.app .portfolioAppContent { display: contents; }
-
-body.app .researchLoaderFrame {
-  display: flex;
-  width: min(100%, 1240px);
-  min-height: calc(100svh - 44px);
-  margin: 0 auto;
-  flex-direction: column;
-}
-
-body.app .researchLoaderHeader,
-body.app .researchLoaderFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-}
-
-body.app .researchLoaderHeader {
-  min-height: 56px;
-  border-bottom: 1px solid var(--border);
-}
-
-body.app .researchLoaderHeader span:first-child { color: var(--text); }
-body.app .researchLoaderHeader i { color: var(--accent); font-style: normal; }
-
-body.app .researchLoaderMain {
-  display: flex;
-  width: min(100%, 680px);
-  margin: auto;
-  padding: 45px 0;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-body.app .loaderInstrument {
-  position: relative;
-  display: grid;
-  width: 136px;
-  height: 136px;
-  margin: 0 auto 44px;
-  align-self: center;
-  place-items: center;
-}
-
-body.app .loaderOrbit,
-body.app .loaderAxis,
-body.app .loaderInstrumentCore,
-body.app .loaderSignal {
-  position: absolute;
-}
-
-body.app .loaderOrbit {
-  width: 100%;
-  height: 42%;
-  border: 1px solid color-mix(in srgb, var(--accent) 58%, transparent);
-  border-radius: 50%;
-}
-
-body.app .loaderOrbitOne {
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 42%;
-  transform: translate(-50%, -50%);
-  transform-origin: center center;
-  animation: loaderOrbitSpin 6s linear infinite;
-}
-
-body.app .loaderOrbitTwo {
-  top: 50%;
-  left: 50%;
-  width: 43%;
-  height: 100%;
-  transform: translate(-50%, -50%);
-  transform-origin: center center;
-  border-color: color-mix(in srgb, var(--accent-strong) 64%, transparent);
-  animation: loaderOrbitSpin 8s linear infinite reverse;
-}
-
-body.app .loaderAxisHorizontal {
-  width: 122%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
-}
-
-body.app .loaderAxisVertical {
-  width: 1px;
-  height: 122%;
-  background: linear-gradient(180deg, transparent, var(--border-strong), transparent);
-}
-
-body.app .loaderInstrumentCore {
-  display: grid;
-  width: 54px;
-  height: 54px;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  background: var(--panel);
-  color: var(--accent);
-  font-family: 'Literata', Georgia, serif;
-  font-size: 20px;
-  place-items: center;
-  box-shadow: 0 0 32px color-mix(in srgb, var(--accent) 16%, transparent);
-}
-
-body.app .loaderSignal {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent-strong);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-strong) 64%, transparent);
-}
-
-body.app .loaderSignalOne { top: 14px; left: 32px; }
-body.app .loaderSignalTwo { right: 5px; bottom: 39px; background: var(--accent); }
-body.app .loaderSignalThree { bottom: 18px; left: 50px; width: 5px; height: 5px; }
-
-body.app .researchLoaderEyebrow {
-  margin: 0 0 14px;
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-}
-
-body.app .researchLoaderMain h1 {
-  margin: 0;
-  color: var(--text);
-  font-family: 'Literata', Georgia, serif;
-  font-size: 50px;
-  font-weight: 500;
-  line-height: 1.08;
-}
-
-body.app .researchLoaderDescription {
-  max-width: 480px;
-  margin: 16px 0 34px;
-  color: var(--text-muted);
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-body.app .researchLoaderReadout {
-  display: flex;
-  width: 100%;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.1px;
-}
-
-body.app .researchLoaderPercent {
-  color: var(--text);
-  font-family: 'Literata', Georgia, serif;
-  font-size: 25px;
-  font-weight: 500;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-body.app .researchLoaderTrack {
-  width: 100%;
-  height: 3px;
-  margin-top: 10px;
-  overflow: hidden;
-  background: var(--border);
-}
-
-body.app .researchLoaderTrack span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-  box-shadow: 0 0 16px var(--accent-glow);
-  transition: width 120ms linear;
-}
-
-body.app .researchLoaderFooter {
-  min-height: 42px;
-  border-top: 1px solid var(--border);
-  font-size: 9px;
-  letter-spacing: 0.9px;
-}
-
-@keyframes loaderOrbitSpin {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-@keyframes researchLoaderEnter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@media (max-width: 560px) {
-  body.app .researchLoader { padding: 14px 20px; }
-  body.app .researchLoaderFrame { min-height: calc(100svh - 28px); }
-  body.app .researchLoaderHeader,
-  body.app .researchLoaderFooter { font-size: 8px; letter-spacing: 0.5px; }
-  body.app .loaderInstrument { width: 112px; height: 112px; margin-bottom: 36px; }
-  body.app .researchLoaderMain h1 { font-size: 38px; }
-  body.app .researchLoaderDescription { font-size: 14px; }
-  body.app .researchLoaderEyebrow { font-size: 10px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body.app .researchLoader,
-  body.app .loaderOrbitOne,
-  body.app .loaderOrbitTwo { animation: none !important; }
-  body.app .researchLoaderTrack span { transition: none; }
-}
 
 body.app,
 body.app.light,
@@ -1324,6 +1065,18 @@ body.app .dailyThoughtMeta time {
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
+}
+
+body.app .dailyThoughtTime {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+body.app .dailyThoughtTime time:last-child {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
 }
 
 body.app .dailyThought blockquote {

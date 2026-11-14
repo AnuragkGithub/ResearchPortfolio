@@ -1,4 +1,6 @@
 
+import Link from "next/link";
+
 const collections = [
   {
     number: "01",
@@ -40,8 +42,8 @@ export default function Notes() {
     <main className="notesPage">
       <div className="notesShell">
         <header className="notesNav">
-          <a href="/">AK / RESEARCH PORTFOLIO</a>
-          <a href="/">Back to portfolio ↗</a>
+          <Link href="/">AK / RESEARCH PORTFOLIO</Link>
+          <Link href="/">Back to portfolio ↗</Link>
         </header>
 
         <section className="notesHero">

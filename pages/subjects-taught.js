@@ -1,4 +1,5 @@
 import AcademicLayout from "../components/AcademicLayout";
+import Link from "next/link";
 const courses = [
   {
     number: "01",
@@ -86,12 +87,12 @@ export default function SubjectsTaught() {
     <main className="academicPage">
       <div className="academicShell">
         <header className="academicNav">
-          <a href="/" className="academicBrand">
+          <Link href="/" className="academicBrand">
             AK <span>/ RESEARCH PORTFOLIO</span>
-          </a>
-          <a href="/" className="academicBack">
+          </Link>
+          <Link href="/" className="academicBack">
             Back to portfolio ↗
-          </a>
+          </Link>
         </header>
 
         <section className="academicHero">
