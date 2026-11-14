@@ -1437,6 +1437,41 @@ function DeveloperConsole() {
 
 function Hero() {
   const name = "ANURAG KARMAKAR";
+  const [viewCount, setViewCount] = useState(null);
+  const [viewCountUnavailable, setViewCountUnavailable] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadViewCount() {
+      try {
+        const response = await fetch("/api/views", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`View counter request failed (${response.status})`);
+        }
+
+        const result = await response.json();
+        if (!Number.isSafeInteger(result.count) || result.count < 0) {
+          throw new Error("View counter returned an invalid count");
+        }
+
+        setViewCount(result.count);
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        console.error("Could not load portfolio views:", error);
+        setViewCountUnavailable(true);
+      }
+    }
+
+    loadViewCount();
+    return () => controller.abort();
+  }, []);
 
   return (
     <>
@@ -1450,9 +1485,30 @@ function Hero() {
           <div className="heroSplitLayout">
             <div className="heroSplitCopy">
               <div className="heroSplitInner">
-                <div className="badge">
-                  <span className="badge-dot" />
-                  SOFTWARE ENGINEER • APPLIED RESEARCHER
+                <div className="heroBadgeRow">
+                  <div className="badge">
+                    <span className="badge-dot" />
+                    SOFTWARE ENGINEER • APPLIED RESEARCHER
+                  </div>
+                  <div
+                    className="heroViews"
+                    aria-live="polite"
+                    aria-label={
+                      viewCount === null
+                        ? "Portfolio views"
+                        : `${viewCount.toLocaleString()} portfolio views`
+                    }
+                  >
+                    <span className="heroViewsDot" aria-hidden="true" />
+                    <span>VIEWS</span>
+                    <strong>
+                      {viewCount !== null
+                        ? viewCount.toLocaleString()
+                        : viewCountUnavailable
+                          ? "Unavailable"
+                          : "Loading"}
+                    </strong>
+                  </div>
                 </div>
 
                 <h1 className="name-container" aria-label={name}>
@@ -1578,8 +1634,11 @@ function Hero() {
         }
 
         .heroSplitStage.is-centered .badge {
-          margin-left: auto;
-          margin-right: auto;
+          margin: 0;
+        }
+
+        .heroSplitStage.is-centered .heroBadgeRow {
+          justify-content: center;
         }
 
         .heroSplitStage.is-centered .name-container {
@@ -1647,8 +1706,15 @@ function Hero() {
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 1.5px;
-          margin-bottom: 22px;
           backdrop-filter: blur(14px);
+        }
+
+        .heroBadgeRow {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 22px;
         }
 
         .badge-dot {
@@ -1658,6 +1724,37 @@ function Hero() {
           border-radius: 50%;
           background: var(--accent);
           box-shadow: 0 0 12px var(--accent);
+        }
+
+        .heroViews {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          min-height: 34px;
+          padding: 7px 12px;
+          border: 1px solid var(--border);
+          border-radius: 999px;
+          background: var(--panel);
+          color: var(--text-muted);
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 1.2px;
+          backdrop-filter: blur(14px);
+        }
+
+        .heroViewsDot {
+          width: 6px;
+          height: 6px;
+          flex: 0 0 6px;
+          border-radius: 50%;
+          background: var(--accent);
+          box-shadow: 0 0 10px var(--accent);
+        }
+
+        .heroViews strong {
+          color: var(--text);
+          font-size: 11px;
+          letter-spacing: 0;
         }
 
         .name-container {
