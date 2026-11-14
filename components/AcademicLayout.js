@@ -66,10 +66,13 @@ export default function AcademicLayout({
             </select>
           </div>
 
-          <div className="reach">
-            <span>PORTFOLIO REACH</span>
-            <strong>AK</strong>
-          </div>
+          <Link className="navBrand" href="/" aria-label="Anurag Karmakar, home">
+            <span className="navMonogram" aria-hidden="true">AK</span>
+            <span className="navBrandName">
+              <strong>Anurag Karmakar</strong>
+              <small>Research · Engineering</small>
+            </span>
+          </Link>
         </div>
 
         <nav className="mainLinks">

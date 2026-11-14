@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import CustomCursor from "../components/CustomCursor";
 
 export default function App({ Component, pageProps }) {
   const [mode, setMode] = useState("light");
@@ -36,6 +37,7 @@ export default function App({ Component, pageProps }) {
         mode={mode}
         setMode={setMode}
       />
+      <CustomCursor />
     </div>
   );
 }

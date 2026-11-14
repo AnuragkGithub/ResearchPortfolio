@@ -2,59 +2,11 @@
 // Place this file at pages/index.js. Keep package.json and Next.js configuration.
 // Required packages from the existing project: react, gsap, lenis, next.
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Lenis from "lenis";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, OrbitControls, Stars, useGLTF } from "@react-three/drei";
-
-
-// ================= CustomCursor.js =================
-function CustomCursor() {
-  const cursorRef = useRef();
-
-  useEffect(() => {
-    const moveCursor = (e) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
-      }
-    };
-
-    window.addEventListener("mousemove", moveCursor);
-
-    return () => {
-      window.removeEventListener("mousemove", moveCursor);
-    };
-  }, []);
-
-  return (
-    <>
-      <div ref={cursorRef} className="cursor" />
-
-      <style jsx>{`
-        .cursor {
-          width: 24px;
-          height: 24px;
-          border: 1px solid rgba(255,255,255,0.5);
-          border-radius: 50%;
-          position: fixed;
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          z-index: 9999;
-          backdrop-filter: blur(4px);
-          transition: transform 0.08s linear;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-          background: transparent;
-        }
-      `}</style>
-    </>
-  );
-}
-
-
 // ================= About.js =================
 function About() {
   const technicalAreas = [
@@ -485,6 +437,14 @@ function Navbar({ mode, setMode }) {
 
   return (
     <nav className="navbar">
+      <a className="navBrand" href="#home" aria-label="Anurag Karmakar, home">
+        <span className="navMonogram" aria-hidden="true">AK</span>
+        <span className="navBrandName">
+          <strong>Anurag Karmakar</strong>
+          <small>Research · Engineering</small>
+        </span>
+      </a>
+
       <div className="clockWrap">
         <button
           type="button"
@@ -512,8 +472,6 @@ function Navbar({ mode, setMode }) {
           ))}
         </div>
       </div>
-
-      <PortfolioViews />
 
       <div className="links">
         <button type="button" onClick={() => navigateTo("home")}>Overview</button>
@@ -1252,53 +1210,6 @@ function DailyThought() {
 }
 
 
-function PortfolioViews() {
-  const [count, setCount] = useState(null);
-  const [status, setStatus] = useState("loading");
-  const requestStarted = useRef(false);
-
-  useEffect(() => {
-    if (requestStarted.current) return;
-    requestStarted.current = true;
-
-    fetch("/api/views", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-    })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Viewer counter request failed");
-        const result = await response.json();
-        if (!Number.isSafeInteger(result.count) || result.count < 0) {
-          throw new Error("Viewer counter returned an invalid count");
-        }
-        setCount(result.count);
-        setStatus("ready");
-      })
-      .catch(() => setStatus("unavailable"));
-  }, []);
-
-  return (
-    <div className="portfolioViews" role="group" aria-label="Portfolio reach">
-      <div className="portfolioViewsInner">
-        <span className="portfolioViewsLabel">PORTFOLIO REACH</span>
-        <strong className="portfolioViewsCount" aria-live="polite">
-          {count === null
-            ? status === "unavailable" ? "Not set up" : "..."
-            : count.toLocaleString()}
-        </strong>
-        <span className="portfolioViewsCaption">
-          {status === "unavailable" ? "connect Supabase to track page views" : "total page views"}
-        </span>
-        <span className="visuallyHidden" aria-live="polite">
-          {status === "unavailable" ? "Page-view count is unavailable." : ""}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-
 // ================= Contact.js =================
 function Contact() {
   return (
@@ -1431,883 +1342,100 @@ function Contact() {
     </section>
   );
 }
-// ================= 3D Hero Visual =================
-// ================= HUMANOID ROBOT (Ultra-Realistic) =================
-
-function Robot3D({ mode = "light" }) {
-  const robot = useRef();
-  const leftArmRef = useRef();
-  const rightArmRef = useRef();
-  const leftLegRef = useRef();
-  const rightLegRef = useRef();
-  const headRef = useRef();
-  const reactorRef = useRef();
-  const eyeLeftRef = useRef();
-  const eyeRightRef = useRef();
-
-  const isLight = mode === "light";
-  const isCyber = mode === "cyber";
-
-  const palette = {
-    body:      isCyber ? "#1e2d35" : isLight ? "#cdd4d1" : "#2a3530",
-    bodyHi:    isCyber ? "#2d4452" : isLight ? "#e8edeb" : "#3d4f49",
-    bodyDark:  isCyber ? "#0b161c" : isLight ? "#5e6a67" : "#111a17",
-    silver:    isCyber ? "#6b8fa3" : isLight ? "#dce3e1" : "#7a8d89",
-    joint:     isCyber ? "#384e5c" : isLight ? "#8e9d98" : "#343f3c",
-    visor:     isCyber ? "#040e14" : isLight ? "#1a2e2b" : "#050d0b",
-    glow:      isCyber ? "#38bdf8" : isLight ? "#16c381" : "#56e8a4",
-    glowEmit:  isCyber ? "#0ea5e9" : isLight ? "#0aaa6e" : "#2ad483",
-    accent2:   isCyber ? "#f59e0b" : isLight ? "#e07b3b" : "#d4793a",
-    accent2Em: isCyber ? "#d97706" : isLight ? "#c06430" : "#b55e28",
-  };
-
-  const metal    = { color: palette.body,     metalness: 0.86, roughness: isLight ? 0.28 : 0.18 };
-  const metalHi  = { color: palette.bodyHi,   metalness: 0.78, roughness: 0.22 };
-  const darkMetal= { color: palette.bodyDark, metalness: 0.94, roughness: 0.14 };
-  const silver   = { color: palette.silver,   metalness: 0.94, roughness: 0.16 };
-  const joint    = { color: palette.joint,    metalness: 0.88, roughness: 0.26 };
-  const glow     = { color: palette.glow, emissive: palette.glowEmit, emissiveIntensity: isCyber ? 3.2 : isLight ? 1.8 : 2.6, metalness: 0.2, roughness: 0.1 };
-  const glow2    = { color: palette.accent2, emissive: palette.accent2Em, emissiveIntensity: isCyber ? 2.5 : isLight ? 1.5 : 2.2, metalness: 0.2, roughness: 0.1 };
-  const visorMat = { color: palette.visor, metalness: 0.92, roughness: 0.04, emissive: palette.glowEmit, emissiveIntensity: isCyber ? 0.5 : 0.25 };
-
-  useFrame((state, delta) => {
-    if (!robot.current) return;
-    const t = state.clock.elapsedTime;
-    robot.current.rotation.y += delta * 0.13;
-    robot.current.position.y = Math.sin(t * 1.1) * 0.04;
-    robot.current.rotation.z = Math.sin(t * 0.55) * 0.01;
-    if (headRef.current) {
-      headRef.current.rotation.y = Math.sin(t * 0.38) * 0.28;
-      headRef.current.rotation.x = Math.sin(t * 0.52) * 0.06;
-    }
-    if (leftArmRef.current)  leftArmRef.current.rotation.x  =  Math.sin(t * 1.1) * 0.18;
-    if (rightArmRef.current) rightArmRef.current.rotation.x  = -Math.sin(t * 1.1) * 0.18;
-    if (leftLegRef.current)  leftLegRef.current.rotation.x  =  Math.sin(t * 0.7) * 0.06;
-    if (rightLegRef.current) rightLegRef.current.rotation.x  = -Math.sin(t * 0.7) * 0.06;
-    if (reactorRef.current) reactorRef.current.scale.setScalar(1 + Math.sin(t * 4.5) * 0.14);
-    if (eyeLeftRef.current && eyeRightRef.current) {
-      const blink = Math.sin(t * 6.8) > 0.97 ? 0.1 : 1;
-      eyeLeftRef.current.scale.y  = blink;
-      eyeRightRef.current.scale.y = blink;
-    }
-  });
+// ================= Hero.js (custom split-screen landing) =================
+function DeveloperConsole() {
+  const [activeDomain, setActiveDomain] = useState(0);
+  const domains = [
+    {
+      label: "Applied AI",
+      title: "Build useful intelligence.",
+      description: "Prototype, test, and evaluate AI systems against real problems.",
+      steps: ["Frame the question", "Build a prototype", "Measure the result"],
+    },
+    {
+      label: "Cybersecurity",
+      title: "Make systems more resilient.",
+      description: "Investigate risks and translate findings into practical defenses.",
+      steps: ["Map the surface", "Test assumptions", "Strengthen defenses"],
+    },
+    {
+      label: "Data systems",
+      title: "Turn data into decisions.",
+      description: "Design dependable pipelines and clear ways to explore evidence.",
+      steps: ["Collect evidence", "Shape the pipeline", "Surface insight"],
+    },
+  ];
+  const selectedDomain = domains[activeDomain];
 
   return (
-    <group ref={robot} position={[0, -1.05, 0]} scale={0.78}>
-
-      {/* PELVIS */}
-      <mesh position={[0, -0.12, 0]}><boxGeometry args={[0.62, 0.22, 0.38]} /><meshStandardMaterial {...metal} /></mesh>
-      <mesh position={[0, -0.12, 0.22]}><boxGeometry args={[0.38, 0.16, 0.05]} /><meshStandardMaterial {...darkMetal} /></mesh>
-
-      {/* WAIST */}
-      <mesh position={[0, 0.07, 0]}><cylinderGeometry args={[0.22, 0.3, 0.28, 28]} /><meshStandardMaterial {...joint} /></mesh>
-      <mesh position={[0, 0.07, 0.22]}><boxGeometry args={[0.28, 0.045, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
-
-      {/* TORSO */}
-      <group position={[0, 0.82, 0]}>
-        <mesh><boxGeometry args={[0.9, 1.02, 0.5]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, 0.18, 0.27]}><boxGeometry args={[0.72, 0.52, 0.08]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[0, 0.18, 0.315]}><boxGeometry args={[0.52, 0.38, 0.04]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[-0.25, 0.32, 0.3]}><boxGeometry args={[0.18, 0.13, 0.05]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0.25, 0.32, 0.3]}><boxGeometry args={[0.18, 0.13, 0.05]} /><meshStandardMaterial {...silver} /></mesh>
-        {[-0.05, 0.05, 0.15].map((y, i) => (
-          <mesh key={`rib-${i}`} position={[0, y, 0.285]}><boxGeometry args={[0.62, 0.018, 0.02]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        ))}
-        <group ref={reactorRef} position={[0, 0.1, 0.32]}>
-          <mesh><cylinderGeometry args={[0.12, 0.12, 0.055, 40]} /><meshStandardMaterial {...glow} /></mesh>
-          <mesh rotation={[0, 0, Math.PI / 6]}><torusGeometry args={[0.145, 0.015, 10, 40]} /><meshStandardMaterial {...glow2} /></mesh>
-        </group>
-        <mesh position={[-0.25, 0.32, 0.32]}><boxGeometry args={[0.14, 0.022, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[0.25, 0.32, 0.32]}><boxGeometry args={[0.14, 0.022, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[-0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.065, 0.065, 0.12, 16]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.065, 0.065, 0.12, 16]} /><meshStandardMaterial {...silver} /></mesh>
-        {[-0.15, 0, 0.15].map((x, i) => (
-          <mesh key={`spine-${i}`} position={[x, 0.06, -0.295]}><cylinderGeometry args={[0.022, 0.022, 0.68, 10]} /><meshStandardMaterial {...glow2} /></mesh>
-        ))}
-      </group>
-
-      {/* HEAD */}
-      <group ref={headRef} position={[0, 1.74, 0]}>
-        <mesh position={[0, -0.38, 0]}><cylinderGeometry args={[0.18, 0.24, 0.32, 28]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[0, -0.28, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.21, 0.01, 10, 36]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh><boxGeometry args={[0.78, 0.82, 0.68]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, 0.35, 0.12]}><boxGeometry args={[0.72, 0.16, 0.48]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[0, -0.02, 0.36]}><boxGeometry args={[0.64, 0.6, 0.08]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0, 0.08, 0.41]}><boxGeometry args={[0.58, 0.15, 0.04]} /><meshStandardMaterial {...visorMat} /></mesh>
-        <mesh ref={eyeLeftRef} position={[-0.15, 0.09, 0.44]}><boxGeometry args={[0.14, 0.04, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh ref={eyeRightRef} position={[0.15, 0.09, 0.44]}><boxGeometry args={[0.14, 0.04, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[-0.16, 0.17, 0.4]}><boxGeometry args={[0.14, 0.025, 0.025]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0.16, 0.17, 0.4]}><boxGeometry args={[0.14, 0.025, 0.025]} /><meshStandardMaterial {...silver} /></mesh>
-        {[-0.09, -0.03, 0.03, 0.09].map((x, i) => (
-          <mesh key={`mouth-${i}`} position={[x, -0.1, 0.42]}><boxGeometry args={[0.018, 0.055, 0.01]} /><meshStandardMaterial {...glow2} /></mesh>
-        ))}
-        <mesh position={[0, -0.27, 0.3]}><boxGeometry args={[0.38, 0.12, 0.1]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[-0.42, 0.06, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 0.16, 18]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0.42, 0.06, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 0.16, 18]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[-0.43, 0.1, 0]}><sphereGeometry args={[0.038, 14, 14]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[0.43, 0.1, 0]}><sphereGeometry args={[0.038, 14, 14]} /><meshStandardMaterial {...glow} /></mesh>
-      </group>
-
-      {/* LEFT ARM */}
-      <group ref={leftArmRef} position={[-0.62, 1.26, 0]}>
-        <mesh><sphereGeometry args={[0.29, 26, 22]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[-0.02, 0.01, 0.16]}><sphereGeometry args={[0.22, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[-0.08, 0.16, 0]} rotation={[0, 0, 0.3]}><boxGeometry args={[0.28, 0.14, 0.32]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[-0.06, -0.45, 0]}><capsuleGeometry args={[0.135, 0.54, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[-0.06, -0.78, 0]}><sphereGeometry args={[0.14, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[-0.06, -1.08, 0]}><capsuleGeometry args={[0.125, 0.5, 8, 16]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[-0.06, -1.05, 0.13]}><boxGeometry args={[0.09, 0.38, 0.025]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[-0.06, -1.36, 0]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.13, 0.022, 10, 28]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[-0.06, -1.56, 0]}><boxGeometry args={[0.28, 0.28, 0.2]} /><meshStandardMaterial {...metal} /></mesh>
-        {[-0.1, -0.033, 0.033, 0.1].map((x, i) => (
-          <mesh key={`lf-${i}`} position={[x - 0.06, -1.76, 0]}><capsuleGeometry args={[0.033, 0.16, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
-        ))}
-        <mesh position={[-0.22, -1.62, 0.04]} rotation={[0, 0, -0.65]}><capsuleGeometry args={[0.036, 0.14, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
-      </group>
-
-      {/* RIGHT ARM */}
-      <group ref={rightArmRef} position={[0.62, 1.26, 0]}>
-        <mesh><sphereGeometry args={[0.29, 26, 22]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[0.02, 0.01, 0.16]}><sphereGeometry args={[0.22, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[0.08, 0.16, 0]} rotation={[0, 0, -0.3]}><boxGeometry args={[0.28, 0.14, 0.32]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0.06, -0.45, 0]}><capsuleGeometry args={[0.135, 0.54, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0.06, -0.78, 0]}><sphereGeometry args={[0.14, 22, 18]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[0.06, -1.08, 0]}><capsuleGeometry args={[0.125, 0.5, 8, 16]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0.06, -1.05, 0.13]}><boxGeometry args={[0.09, 0.38, 0.025]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[0.06, -1.36, 0]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.13, 0.022, 10, 28]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0.06, -1.56, 0]}><boxGeometry args={[0.28, 0.28, 0.2]} /><meshStandardMaterial {...metal} /></mesh>
-        {[-0.1, -0.033, 0.033, 0.1].map((x, i) => (
-          <mesh key={`rf-${i}`} position={[x + 0.06, -1.76, 0]}><capsuleGeometry args={[0.033, 0.16, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
-        ))}
-        <mesh position={[0.22, -1.62, 0.04]} rotation={[0, 0, 0.65]}><capsuleGeometry args={[0.036, 0.14, 6, 10]} /><meshStandardMaterial {...silver} /></mesh>
-      </group>
-
-      {/* LEFT LEG */}
-      <group ref={leftLegRef} position={[-0.26, -0.25, 0]}>
-        <mesh><sphereGeometry args={[0.2, 24, 20]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[0, -0.5, 0]}><capsuleGeometry args={[0.185, 0.72, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -0.42, 0.2]}><boxGeometry args={[0.28, 0.48, 0.06]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[0, -0.96, 0.04]}><sphereGeometry args={[0.17, 24, 20]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0, -0.96, 0.21]}><boxGeometry args={[0.09, 0.03, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[0, -1.38, 0.04]}><capsuleGeometry args={[0.165, 0.68, 8, 18]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0, -1.36, 0.2]}><boxGeometry args={[0.24, 0.5, 0.07]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -1.81, 0]}><cylinderGeometry args={[0.11, 0.13, 0.16, 22]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0, -1.97, 0.14]}><boxGeometry args={[0.36, 0.22, 0.58]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0, -2.0, 0.44]}><boxGeometry args={[0.3, 0.14, 0.08]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -1.87, 0.42]}><boxGeometry args={[0.26, 0.018, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
-      </group>
-
-      {/* RIGHT LEG */}
-      <group ref={rightLegRef} position={[0.26, -0.25, 0]}>
-        <mesh><sphereGeometry args={[0.2, 24, 20]} /><meshStandardMaterial {...joint} /></mesh>
-        <mesh position={[0, -0.5, 0]}><capsuleGeometry args={[0.185, 0.72, 8, 18]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -0.42, 0.2]}><boxGeometry args={[0.28, 0.48, 0.06]} /><meshStandardMaterial {...metalHi} /></mesh>
-        <mesh position={[0, -0.96, 0.04]}><sphereGeometry args={[0.17, 24, 20]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0, -0.96, 0.21]}><boxGeometry args={[0.09, 0.03, 0.02]} /><meshStandardMaterial {...glow} /></mesh>
-        <mesh position={[0, -1.38, 0.04]}><capsuleGeometry args={[0.165, 0.68, 8, 18]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0, -1.36, 0.2]}><boxGeometry args={[0.24, 0.5, 0.07]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -1.81, 0]}><cylinderGeometry args={[0.11, 0.13, 0.16, 22]} /><meshStandardMaterial {...silver} /></mesh>
-        <mesh position={[0, -1.97, 0.14]}><boxGeometry args={[0.36, 0.22, 0.58]} /><meshStandardMaterial {...darkMetal} /></mesh>
-        <mesh position={[0, -2.0, 0.44]}><boxGeometry args={[0.3, 0.14, 0.08]} /><meshStandardMaterial {...metal} /></mesh>
-        <mesh position={[0, -1.87, 0.42]}><boxGeometry args={[0.26, 0.018, 0.018]} /><meshStandardMaterial {...glow} /></mesh>
-      </group>
-
-      {/* GROUND GLOW HALO */}
-      <mesh position={[0, -2.26, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.3, 0.85, 40]} />
-        <meshStandardMaterial color={palette.glow} emissive={palette.glowEmit} emissiveIntensity={0.7} transparent opacity={0.22} side={2} />
-      </mesh>
-
-    </group>
-  );
-}
-
-// ================= ROCKET 3D (Ultra-Realistic) =================
-
-function Rocket3D({ active, mode = "light" }) {
-  const rocket    = useRef();
-  const flameRef  = useRef();
-  const flame2Ref = useRef();
-  const exhaustRef = useRef();
-  const startTime = useRef(null);
-
-  const isLight = mode === "light";
-  const isCyber = mode === "cyber";
-
-  const bodyColor  = isCyber ? "#1c2c34" : isLight ? "#d8dede" : "#a8b6b2";
-  const panelColor = isCyber ? "#0d1a20" : isLight ? "#8a9998" : "#505e5a";
-  const accentCol  = isCyber ? "#38bdf8" : isLight ? "#168a68" : "#56d49a";
-  const noseColor  = isCyber ? "#0a1720" : isLight ? "#1e3530" : "#162320";
-  const windowGlow = isCyber ? "#0ea5e9" : isLight ? "#1bc390" : "#25e8a0";
-  const finColor   = isCyber ? "#152129" : isLight ? "#6e7f7b" : "#3e4d49";
-
-  useEffect(() => { if (active) startTime.current = null; }, [active]);
-
-  useFrame((state, delta) => {
-    if (!rocket.current) return;
-    const t = state.clock.elapsedTime;
-
-    // Continuous majestic 360-degree rotation to display fine fuselage and panel details
-    rocket.current.rotation.y += delta * 0.16;
-
-    if (active) {
-      if (startTime.current === null) startTime.current = t;
-      const elapsed = t - startTime.current;
-      const dur = 3.5;
-      if (elapsed < dur) {
-        const p = elapsed / dur;
-        const e = p * p * (3 - 2 * p);
-        rocket.current.position.y = -0.5 + e * 1.8;
-        rocket.current.rotation.z = Math.sin(elapsed * 2.8) * 0.022;
-      } else {
-        rocket.current.position.y = 1.3 + Math.sin(t * 1.2) * 0.04;
-        rocket.current.rotation.z = Math.sin(t * 0.9) * 0.012;
-      }
-    }
-    if (flameRef.current) {
-      const s = 0.85 + Math.sin(t * 22) * 0.12;
-      flameRef.current.scale.set(s, 0.9 + Math.sin(t * 18) * 0.1, s);
-    }
-    if (flame2Ref.current) {
-      const s2 = 0.7 + Math.sin(t * 27 + 1) * 0.15;
-      flame2Ref.current.scale.set(s2, 0.85 + Math.sin(t * 20 + 0.5) * 0.12, s2);
-    }
-    if (exhaustRef.current) {
-      const s3 = 1 + Math.sin(t * 30 + 2) * 0.08;
-      exhaustRef.current.scale.set(s3, 1, s3);
-    }
-  });
-
-  return (
-    <group ref={rocket} position={[0, -0.5, 0]} scale={0.75}>
-
-      {/* MAIN BODY */}
-      <mesh><cylinderGeometry args={[0.31, 0.42, 1.8, 40]} /><meshStandardMaterial color={bodyColor} metalness={0.82} roughness={0.2} /></mesh>
-
-      {/* Body panel rings */}
-      {[0.5, 0.1, -0.3].map((y, i) => (
-        <mesh key={`panel-${i}`} position={[0, y, 0]}>
-          <torusGeometry args={[0.315 + i * 0.02, 0.008, 8, 60]} />
-          <meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.15} />
-        </mesh>
-      ))}
-
-      {/* Vertical seams */}
-      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((a, i) => (
-        <mesh key={`seam-${i}`} position={[Math.cos(a) * 0.32, 0, Math.sin(a) * 0.32]}>
-          <boxGeometry args={[0.018, 1.7, 0.018]} />
-          <meshStandardMaterial color={panelColor} metalness={0.85} roughness={0.18} />
-        </mesh>
-      ))}
-
-      {/* NOSE CONE */}
-      <mesh position={[0, 1.18, 0]}><coneGeometry args={[0.31, 0.72, 40]} /><meshStandardMaterial color={noseColor} metalness={0.65} roughness={0.22} /></mesh>
-      <mesh position={[0, 1.56, 0]}><sphereGeometry args={[0.04, 14, 14]} /><meshStandardMaterial color={accentCol} emissive={accentCol} emissiveIntensity={2.5} /></mesh>
-      {/* Telemetry spike */}
-      <mesh position={[0, 1.68, 0]}><cylinderGeometry args={[0.006, 0.012, 0.22, 12]} /><meshStandardMaterial color={panelColor} metalness={0.95} roughness={0.1} /></mesh>
-
-      {/* PORTHOLES */}
-      {[0, Math.PI * 0.66, Math.PI * 1.33].map((a, i) => (
-        <group key={`win-${i}`} position={[Math.cos(a) * 0.33, 0.45, Math.sin(a) * 0.33]}>
-          <mesh><cylinderGeometry args={[0.09, 0.09, 0.04, 24]} /><meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.14} /></mesh>
-          <mesh position={[0, 0.025, 0]}><cylinderGeometry args={[0.072, 0.072, 0.02, 24]} /><meshStandardMaterial color="#071b24" emissive={windowGlow} emissiveIntensity={1.8} metalness={0.7} roughness={0.05} /></mesh>
-        </group>
-      ))}
-
-      {/* PAYLOAD FAIRING */}
-      <mesh position={[0, 0.92, 0]}><cylinderGeometry args={[0.34, 0.34, 0.1, 36]} /><meshStandardMaterial color={panelColor} metalness={0.88} roughness={0.2} /></mesh>
-      <mesh position={[0, 0.97, 0]}><torusGeometry args={[0.345, 0.012, 10, 60]} /><meshStandardMaterial color={accentCol} emissive={accentCol} emissiveIntensity={2} /></mesh>
-
-      {/* 4 SWEPT FINS */}
-      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((a, i) => (
-        <group key={`fin-${i}`} rotation={[0, a, 0]}>
-          <mesh position={[0.44, -0.72, 0]} rotation={[0, 0, -0.18]}><boxGeometry args={[0.28, 0.62, 0.08]} /><meshStandardMaterial color={finColor} metalness={0.85} roughness={0.2} /></mesh>
-          <mesh position={[0.56, -0.56, 0]} rotation={[0, 0, -0.52]}><boxGeometry args={[0.07, 0.44, 0.06]} /><meshStandardMaterial color={panelColor} metalness={0.9} roughness={0.15} /></mesh>
-        </group>
-      ))}
-
-      {/* ENGINE */}
-      <mesh position={[0, -1.08, 0]}><cylinderGeometry args={[0.42, 0.44, 0.28, 36]} /><meshStandardMaterial color={panelColor} metalness={0.94} roughness={0.14} /></mesh>
-      <mesh position={[0, -1.38, 0]}><cylinderGeometry args={[0.22, 0.36, 0.32, 36]} /><meshStandardMaterial color={panelColor} metalness={0.96} roughness={0.12} /></mesh>
-      <mesh position={[0, -1.56, 0]}><cylinderGeometry args={[0.19, 0.22, 0.05, 30]} /><meshStandardMaterial color="#ff8c3a" emissive="#ff5500" emissiveIntensity={4.5} /></mesh>
-
-      {/* EXHAUST GLOW */}
-      <group ref={exhaustRef} position={[0, -1.62, 0]}>
-        <mesh><cylinderGeometry args={[0.18, 0.22, 0.06, 24]} /><meshStandardMaterial color="#ff9a40" emissive="#ff6010" emissiveIntensity={5} transparent opacity={0.9} /></mesh>
-      </group>
-
-      {/* SHOCK DIAMONDS IN SUPERSONIC EXHAUST */}
-      <mesh position={[0, -1.82, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.085, 0.015, 8, 24]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffeaa0" emissiveIntensity={6} />
-      </mesh>
-      <mesh position={[0, -2.08, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.055, 0.012, 8, 20]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffaa40" emissiveIntensity={5} />
-      </mesh>
-
-      {/* OUTER FLAME */}
-      <group ref={flameRef} position={[0, -2.14, 0]}>
-        <mesh><coneGeometry args={[0.3, 1.1, 30]} /><meshStandardMaterial color="#ffb347" emissive="#ff4500" emissiveIntensity={5} transparent opacity={0.88} /></mesh>
-      </group>
-
-      {/* INNER FLAME CORE */}
-      <group ref={flame2Ref} position={[0, -1.95, 0]}>
-        <mesh><coneGeometry args={[0.14, 0.75, 24]} /><meshStandardMaterial color="#ffffff" emissive="#ffe0a0" emissiveIntensity={8} transparent opacity={0.95} /></mesh>
-      </group>
-
-    </group>
-  );
-}
-
-// ================= RESEARCH MODEL 3D (Ultra-Realistic) =================
-
-function Research3D({ mode = "light" }) {
-  const group = useRef();
-  const innerCoreRef = useRef();
-  const orbit1Ref = useRef();
-  const orbit2Ref = useRef();
-  const orbit3Ref = useRef();
-  const particleRefs = useRef([]);
-
-  const isLight = mode === "light";
-  const isCyber = mode === "cyber";
-
-  const mainCol   = isCyber ? "#38bdf8" : isLight ? "#168a68" : "#56d4a0";
-  const mainEmit  = isCyber ? "#0ea5e9" : isLight ? "#0aaa5e" : "#30c080";
-  const orbit1Col = isCyber ? "#a855f7" : isLight ? "#b56b3e" : "#d47a45";
-  const orbit2Col = isCyber ? "#60a5fa" : isLight ? "#168a68" : "#72c8a0";
-  const orbit3Col = isCyber ? "#f59e0b" : isLight ? "#c07830" : "#d08040";
-  const coreColor = isCyber ? "#0a1e2c" : isLight ? "#0d2520" : "#081510";
-  const nodeCol   = isCyber ? "#38bdf8" : isLight ? "#16c381" : "#55e8a0";
-
-  const helixNodes = useMemo(() => {
-    const pts = [];
-    const steps = 24;
-    for (let i = 0; i < steps; i++) {
-      const t2 = (i / steps) * Math.PI * 4;
-      const r = 0.62;
-      const y = (i / steps) * 2.4 - 1.2;
-      pts.push({ x: Math.cos(t2) * r, y, z: Math.sin(t2) * r, strand: 0 });
-      pts.push({ x: Math.cos(t2 + Math.PI) * r, y: y + 0.05, z: Math.sin(t2 + Math.PI) * r, strand: 1 });
-    }
-    return pts;
-  }, []);
-
-  const outerNodes = useMemo(() => [
-    { pos: [-1.35,  0.6,  0.0], col: nodeCol,   r: 0.09 },
-    { pos: [ 1.35,  0.6,  0.0], col: orbit1Col, r: 0.09 },
-    { pos: [-1.2,  -0.65, 0.2], col: orbit2Col, r: 0.075 },
-    { pos: [ 1.2,  -0.65,-0.2], col: nodeCol,   r: 0.075 },
-    { pos: [ 0.0,   1.45, 0.0], col: orbit1Col, r: 0.085 },
-    { pos: [ 0.0,  -1.45, 0.0], col: orbit3Col, r: 0.085 },
-    { pos: [-0.85,  0.0,  1.1], col: orbit2Col, r: 0.07  },
-    { pos: [ 0.85,  0.0, -1.1], col: nodeCol,   r: 0.07  },
-  ], [nodeCol, orbit1Col, orbit2Col, orbit3Col]);
-
-  useFrame((state, delta) => {
-    if (!group.current) return;
-    const t = state.clock.elapsedTime;
-    group.current.rotation.y += delta * 0.11;
-    group.current.rotation.x = Math.sin(t * 0.35) * 0.06;
-    if (innerCoreRef.current) {
-      innerCoreRef.current.rotation.y -= delta * 0.22;
-      innerCoreRef.current.rotation.z = Math.sin(t * 0.5) * 0.12;
-    }
-    if (orbit1Ref.current) orbit1Ref.current.rotation.z += delta * 0.38;
-    if (orbit2Ref.current) orbit2Ref.current.rotation.x += delta * 0.28;
-    if (orbit3Ref.current) { orbit3Ref.current.rotation.y += delta * 0.2; orbit3Ref.current.rotation.x += delta * 0.14; }
-    particleRefs.current.forEach((ref, i) => {
-      if (!ref) return;
-      const phase = (i / particleRefs.current.length) * Math.PI * 2;
-      ref.scale.setScalar(1 + Math.sin(t * 2.5 + phase) * 0.18);
-    });
-  });
-
-  return (
-    <group ref={group} scale={1.1}>
-
-      {/* CENTRAL CORE */}
-      <mesh>
-        <icosahedronGeometry args={[0.52, 3]} />
-        <meshStandardMaterial color={coreColor} metalness={0.85} roughness={0.06} emissive={mainEmit} emissiveIntensity={0.18} />
-      </mesh>
-      <mesh>
-        <icosahedronGeometry args={[0.58, 2]} />
-        <meshStandardMaterial color={mainCol} transparent opacity={0.35} wireframe emissive={mainEmit} emissiveIntensity={0.5} />
-      </mesh>
-
-      {/* INNER SPINNING DODECAHEDRON */}
-      <group ref={innerCoreRef}>
-        <mesh>
-          <dodecahedronGeometry args={[0.35, 0]} />
-          <meshStandardMaterial color={mainCol} transparent opacity={0.55} wireframe emissive={mainEmit} emissiveIntensity={0.9} />
-        </mesh>
-        <mesh>
-          <sphereGeometry args={[0.2, 24, 24]} />
-          <meshStandardMaterial color={mainCol} emissive={mainEmit} emissiveIntensity={3.5} transparent opacity={0.9} />
-        </mesh>
-      </group>
-
-      {/* DNA HELIX */}
-      {helixNodes.map((node, i) => (
-        <mesh key={`helix-${i}`} position={[node.x, node.y, node.z]}>
-          <sphereGeometry args={[0.038, 12, 12]} />
-          <meshStandardMaterial color={node.strand === 0 ? mainCol : orbit1Col} emissive={node.strand === 0 ? mainEmit : orbit1Col} emissiveIntensity={1.6} />
-        </mesh>
-      ))}
-      {/* Helix rungs */}
-      {Array.from({ length: 12 }, (_, i) => {
-        const a = (i / 12) * Math.PI * 4;
-        const y = (i / 12) * 2.4 - 1.2;
-        const r = 0.62;
-        const x0 = Math.cos(a) * r; const z0 = Math.sin(a) * r;
-        const x1 = Math.cos(a + Math.PI) * r; const z1 = Math.sin(a + Math.PI) * r;
-        const cx = (x0 + x1) / 2; const cz = (z0 + z1) / 2;
-        const len = Math.sqrt((x1 - x0) ** 2 + (z1 - z0) ** 2);
-        const ang = Math.atan2(z1 - z0, x1 - x0);
-        return (
-          <mesh key={`rung-${i}`} position={[cx, y, cz]} rotation={[0, ang, Math.PI / 2]}>
-            <cylinderGeometry args={[0.012, 0.012, len, 8]} />
-            <meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={0.8} transparent opacity={0.7} />
-          </mesh>
-        );
-      })}
-
-      {/* ORBITAL RINGS */}
-      <group ref={orbit1Ref} rotation={[Math.PI / 2, 0, 0]}>
-        <mesh><torusGeometry args={[1.48, 0.016, 14, 120]} /><meshStandardMaterial color={orbit1Col} emissive={orbit1Col} emissiveIntensity={1.4} /></mesh>
-        <mesh position={[1.48, 0, 0]}><sphereGeometry args={[0.062, 16, 16]} /><meshStandardMaterial color={orbit1Col} emissive={orbit1Col} emissiveIntensity={3} /></mesh>
-      </group>
-      <group ref={orbit2Ref} rotation={[0.62, 0.35, 0.28]}>
-        <mesh><torusGeometry args={[1.22, 0.012, 12, 100]} /><meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={1.2} /></mesh>
-        <mesh position={[0, 1.22, 0]}><sphereGeometry args={[0.05, 14, 14]} /><meshStandardMaterial color={orbit2Col} emissive={orbit2Col} emissiveIntensity={3} /></mesh>
-      </group>
-      <group ref={orbit3Ref} rotation={[-0.35, 0.6, 0.8]}>
-        <mesh><torusGeometry args={[1.0, 0.009, 10, 80]} /><meshStandardMaterial color={orbit3Col} emissive={orbit3Col} emissiveIntensity={1.0} transparent opacity={0.8} /></mesh>
-      </group>
-
-      {/* SATELLITE NODES */}
-      {outerNodes.map((node, i) => (
-        <mesh key={`sat-${i}`} position={node.pos} ref={(el) => { particleRefs.current[i] = el; }}>
-          <sphereGeometry args={[node.r, 18, 18]} />
-          <meshStandardMaterial color={node.col} emissive={node.col} emissiveIntensity={2.2} />
-        </mesh>
-      ))}
-
-      {/* CONNECTION LINES */}
-      {outerNodes.slice(0, 6).map((node, i) => {
-        const [x, y, z] = node.pos;
-        const len = Math.sqrt(x * x + y * y + z * z);
-        const ux = x / len; const uy = y / len; const uz = z / len;
-        const cx = ux * len / 2; const cy = uy * len / 2; const cz = uz * len / 2;
-        const rotX = -Math.atan2(uz, Math.sqrt(ux * ux + uy * uy));
-        const rotY = Math.atan2(ux, uy);
-        return (
-          <mesh key={`conn-${i}`} position={[cx, cy, cz]} rotation={[rotX, rotY, 0]}>
-            <cylinderGeometry args={[0.008, 0.008, len, 6]} />
-            <meshStandardMaterial color={node.col} emissive={node.col} emissiveIntensity={0.6} transparent opacity={0.45} />
-          </mesh>
-        );
-      })}
-
-    </group>
-  );
-}
-// ================= 3D PORTFOLIO SEQUENCE =================
-
-function Portfolio3D({ mode = "light", playing = false }) {
-  const [stage, setStage] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 760);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // Smooth automatic cycling through models, pausing if the user manually selected one
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!userInteracted) {
-        setStage((prev) => (prev + 1) % 3);
-      }
-    }, 6000);
-
-    return () => clearInterval(timer);
-  }, [userInteracted]);
-
-  const selectStage = (index) => {
-    setStage(index);
-    setUserInteracted(true);
-    // Resume auto-cycle after 14 seconds of user inactivity
-    setTimeout(() => setUserInteracted(false), 14000);
-  };
-
-  const isLight = mode === "light";
-  const isCyber = mode === "cyber";
-
-  const sceneAccent = isCyber
-    ? "#38bdf8"
-    : isLight
-    ? "#168a68"
-    : "#72f0b7";
-
-  return (
-    <div className="portfolio3D">
-
-      {/* ================= TOP LABEL ================= */}
-      <div
-        className="portfolio3DHeader"
-        style={{
-          color: sceneAccent,
-        }}
-      >
-        <span>
-          {stage === 0 && "HUMANOID ROBOTICS / 01"}
-          {stage === 1 && "ORBITAL STARSHIP / 02"}
-          {stage === 2 && "BIO-QUANTUM RESEARCH / 03"}
-        </span>
-
-        <span>
-          DRAG TO ROTATE · REALTIME 3D
-        </span>
+    <div className="developerConsole">
+      <div className="consoleChrome">
+        <div className="consoleWindowControls" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+        <span className="consoleFileName">research-workbench / overview</span>
+        <span className="consoleStatus"><i /> READY</span>
       </div>
 
-      {/* ================= MODEL BADGE (Unobstructed at top) ================= */}
-      <div
-        className="portfolio3DLabel"
-        style={{
-          borderColor: `${sceneAccent}55`,
-        }}
-      >
-        {stage === 0 && "NEURAL ROBOT SYSTEM"}
-        {stage === 1 && "AEROSPACE PROPULSION"}
-        {stage === 2 && "QUANTUM RESEARCH LATTICE"}
+      <div className="consoleContent">
+        <div className="consoleEyebrow">SELECT A FOCUS <span>01 — 03</span></div>
+        <div className="consoleTabs" role="tablist" aria-label="Research focus">
+          {domains.map((domain, index) => (
+            <button
+              key={domain.label}
+              id={`focus-tab-${index}`}
+              type="button"
+              role="tab"
+              aria-selected={activeDomain === index}
+              aria-controls="focus-panel"
+              data-cursor="SELECT"
+              onClick={() => setActiveDomain(index)}
+            >
+              {domain.label}
+            </button>
+          ))}
+        </div>
+
+        <div
+          id="focus-panel"
+          className="consoleFocus"
+          role="tabpanel"
+          aria-labelledby={`focus-tab-${activeDomain}`}
+        >
+          <span className="consoleFocusIndex">
+            0{activeDomain + 1}<span>/03</span>
+          </span>
+          <div>
+            <span className="consoleFocusLabel">WORKING PRINCIPLE</span>
+            <h2>{selectedDomain.title}</h2>
+            <p>{selectedDomain.description}</p>
+          </div>
+        </div>
+
+        <div className="consolePipeline">
+          <span className="consoleFocusLabel">A PRACTICAL PROCESS</span>
+          <ol>
+            {selectedDomain.steps.map((step, index) => (
+              <li key={step}>
+                <span>0{index + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
 
-      {/* ================= 3D CANVAS ================= */}
-      <div className="portfolio3DScene">
-        <Canvas
-          camera={{
-            position: [0, 0.15, 5.8],
-            fov: 45,
-          }}
-          dpr={[1, 1.75]}
-          gl={{
-            antialias: true,
-            alpha: true,
-          }}
-        >
-          {/* Base ambient illumination */}
-          <ambientLight intensity={isLight ? 1.5 : 1.1} />
-
-          {/* Main Key light */}
-          <directionalLight
-            position={[4, 5, 5]}
-            intensity={isLight ? 3.4 : 2.8}
-          />
-
-          {/* Side fill light with theme tone */}
-          <directionalLight
-            position={[-4, 2, 3]}
-            intensity={isLight ? 1.5 : 1.2}
-            color={sceneAccent}
-          />
-
-          {/* High-contrast rim/back light to catch metallic edges and bevels */}
-          <directionalLight
-            position={[0, 5, -4.5]}
-            intensity={isLight ? 2.8 : 3.4}
-            color={isCyber ? "#38bdf8" : isLight ? "#ffffff" : "#72f0b7"}
-          />
-
-          {/* Pedestal underglow light */}
-          <pointLight
-            position={[0, -2, 1.2]}
-            intensity={isLight ? 1.6 : 2.4}
-            color={sceneAccent}
-            distance={6.5}
-          />
-
-          {/* Subtle celestial stars */}
-          <Stars
-            radius={10}
-            depth={5}
-            count={220}
-            factor={1.2}
-            saturation={0}
-            fade
-          />
-
-          {/* ================= ROBOT ================= */}
-          <group visible={stage === 0}>
-            <Robot3D mode={mode} />
-          </group>
-
-          {/* ================= ROCKET ================= */}
-          <group visible={stage === 1}>
-            <Rocket3D
-              active={stage === 1}
-              mode={mode}
-            />
-          </group>
-
-          {/* ================= RESEARCH ================= */}
-          <group visible={stage === 2}>
-            <Research3D mode={mode} />
-          </group>
-
-          {/* OrbitControls: responsive drag on desktop, touch transparent on mobile */}
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate={false}
-            enableRotate={!isMobile}
-            touches={{ ONE: undefined, TWO: undefined }}
-            minPolarAngle={Math.PI / 2.5}
-            maxPolarAngle={Math.PI / 1.7}
-          />
-        </Canvas>
+      <div className="consoleFooter">
+        <span>ANURAG KARMAKAR</span>
+        <span>RESEARCH × ENGINEERING</span>
       </div>
-
-      {/* ================= INTERACTIVE DOCK / TABS ================= */}
-      <div className="portfolio3DLegend" role="tablist" aria-label="3D Model selector">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={stage === 0}
-          className={`legendBtn ${stage === 0 ? "active" : ""}`}
-          onClick={() => selectStage(0)}
-        >
-          <span className="dot" /> AI ROBOT
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={stage === 1}
-          className={`legendBtn ${stage === 1 ? "active" : ""}`}
-          onClick={() => selectStage(1)}
-        >
-          <span className="dot" /> FLIGHT SYSTEM
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={stage === 2}
-          className={`legendBtn ${stage === 2 ? "active" : ""}`}
-          onClick={() => selectStage(2)}
-        >
-          <span className="dot" /> QUANTUM DATA
-        </button>
-      </div>
-
-      {/* ================= CSS ================= */}
-      <style jsx>{`
-        .portfolio3D {
-          position: relative;
-          width: 100%;
-          height: 650px;
-          overflow: hidden;
-          transform: translateY(20px);
-          isolation: isolate;
-          touch-action: pan-y;
-        }
-
-        .portfolio3DScene {
-          position: absolute;
-          inset: 0;
-          overflow: hidden;
-          touch-action: pan-y;
-        }
-
-        .portfolio3D canvas {
-          width: 100% !important;
-          height: 100% !important;
-          display: block;
-          touch-action: pan-y;
-        }
-
-        .portfolio3DHeader {
-          position: absolute;
-          top: 18px;
-          left: 0;
-          right: 0;
-          z-index: 10;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0 10px;
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          pointer-events: none;
-          transition: color 0.35s ease;
-        }
-
-        .portfolio3DLabel {
-          position: absolute;
-          top: 48px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 20;
-          padding: 6px 14px;
-          background: rgba(var(--panel-rgb, 20, 26, 24), 0.75);
-          border: 1px solid;
-          border-radius: 999px;
-          color: var(--text);
-          font-size: 8px;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          pointer-events: none;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
-          transition: border-color 0.3s ease;
-        }
-
-        .portfolio3DLegend {
-          position: absolute;
-          bottom: 18px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 25;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          padding: 4px 6px;
-          background: rgba(15, 23, 20, 0.45);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 999px;
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-          pointer-events: auto;
-          white-space: nowrap;
-        }
-
-        .legendBtn {
-          all: unset;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          border-radius: 999px;
-          font-size: 8px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          opacity: 0.7;
-          border: 1px solid transparent;
-          transition: all 0.22s ease;
-        }
-
-        .legendBtn:hover {
-          opacity: 1;
-          color: var(--text);
-          background: rgba(255, 255, 255, 0.06);
-        }
-
-        .legendBtn.active {
-          opacity: 1;
-          color: var(--accent);
-          background: rgba(22, 195, 129, 0.12);
-          border-color: rgba(22, 195, 129, 0.3);
-          box-shadow: 0 0 14px rgba(22, 195, 129, 0.18);
-        }
-
-        .dot {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: currentColor;
-          display: inline-block;
-          transition: transform 0.2s ease;
-        }
-
-        .legendBtn.active .dot {
-          transform: scale(1.3);
-        }
-
-        @media (max-width: 900px) {
-          .portfolio3D {
-            height: 520px;
-            transform: none;
-          }
-          .portfolio3DHeader {
-            top: 14px;
-            font-size: 8px;
-          }
-          .portfolio3DLabel {
-            top: 40px;
-          }
-          .portfolio3DLegend {
-            bottom: 14px;
-            gap: 4px;
-          }
-          .legendBtn {
-            padding: 5px 9px;
-            font-size: 7px;
-          }
-        }
-
-        @media (max-width: 760px) {
-          .portfolio3D {
-            height: 380px;
-            transform: none;
-            pointer-events: none;
-          }
-          .portfolio3D canvas {
-            pointer-events: none;
-          }
-          .portfolio3DLegend {
-            pointer-events: auto !important;
-          }
-        }
-
-        @media (max-width: 560px) {
-          .portfolio3D {
-            height: 320px;
-          }
-          .portfolio3DHeader {
-            padding: 0 8px;
-            font-size: 7px;
-          }
-          .portfolio3DHeader span:last-child {
-            display: none;
-          }
-          .portfolio3DLabel {
-            font-size: 7px;
-            padding: 4px 10px;
-            top: 36px;
-          }
-          .portfolio3DLegend {
-            gap: 2px;
-            padding: 3px 4px;
-            bottom: 10px;
-          }
-          .legendBtn {
-            padding: 4px 7px;
-            font-size: 6.5px;
-            letter-spacing: 0.08em;
-          }
-        }
-      `}</style>
     </div>
   );
 }
-// ================= Hero.js (custom split-screen landing) =================
-function Hero({ mode, playing }) {
+
+function Hero() {
   const name = "ANURAG KARMAKAR";
 
   return (
@@ -2324,7 +1452,7 @@ function Hero({ mode, playing }) {
               <div className="heroSplitInner">
                 <div className="badge">
                   <span className="badge-dot" />
-                  APPLIED AI • CYBERSECURITY • DATA SYSTEMS
+                  SOFTWARE ENGINEER • APPLIED RESEARCHER
                 </div>
 
                 <h1 className="name-container" aria-label={name}>
@@ -2333,14 +1461,14 @@ function Hero({ mode, playing }) {
                 </h1>
 
                 <div className="heroAbout">
-                  <h2>Research interests</h2>
+                  <h2>Research-driven. Built to work.</h2>
                   <p>
-                    I work across applied AI, cybersecurity, and data systems,
-                    turning open-ended questions into tools people can test and use.
+                    I turn complex questions into dependable software across applied
+                    AI, cybersecurity, and data systems.
                   </p>
                   <p className="heroAboutExtra">
-                    My approach combines careful investigation with hands-on
-                    engineering, from security research to production-ready prototypes.
+                    From first investigation to tested prototype, I connect rigorous
+                    research with practical engineering.
                   </p>
                 </div>
 
@@ -2355,7 +1483,7 @@ function Hero({ mode, playing }) {
                         target.scrollIntoView({ behavior: "smooth", block: "start" });
                       }
                     }
-                  }}>Explore selected work</button>
+                  }} data-cursor="EXPLORE">Explore selected work</button>
                   <button type="button" className="secondary-btn" onClick={() => {
                     const target = document.getElementById("contact");
                     if (target) {
@@ -2366,17 +1494,14 @@ function Hero({ mode, playing }) {
                         target.scrollIntoView({ behavior: "smooth", block: "start" });
                       }
                     }
-                  }}>Start a conversation</button>
+                  }} data-cursor="SAY HELLO">Start a conversation</button>
                 </div>
               </div>
             </div>
 
-            <aside
-  className="heroResearchVisual"
-  aria-label="Interactive 3D portfolio visual"
->
-  <Portfolio3D mode={mode} playing={playing} />
-</aside>
+            <aside className="heroResearchVisual" aria-label="Interactive research focus selector">
+              <DeveloperConsole />
+            </aside>
           </div>
 
           <div className="heroScrollCue">
@@ -3615,10 +2740,9 @@ export default function Home({ mode = "light", setMode = () => {} }) {
     <div className={`app ${mode}`}>
       <style jsx global>{":root {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #090a12 100%);\n  --panel: rgba(255, 255, 255, 0.06);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --surface: rgba(255, 255, 255, 0.06);\n  --surface-soft: rgba(255, 255, 255, 0.03);\n  --glass: rgba(255, 255, 255, 0.08);\n  --border: rgba(255, 255, 255, 0.1);\n  --border-strong: rgba(255, 255, 255, 0.16);\n  --text: #eef2ff;\n  --text-muted: rgba(238, 242, 255, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #a855f7;\n  --accent-soft: #83c5fd;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.45);\n  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.18);\n  --stroke: rgba(255, 255, 255, 0.06);\n  --card-bg: rgba(255, 255, 255, 0.04);\n  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.18);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: var(--text-muted);\n  --tag-bg: rgba(255, 255, 255, 0.08);\n  --tag-text: var(--text-muted);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  width: 100%;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  width: 100%;\n  overflow-x: clip;\n  min-height: 100vh;\n  font-family: var(--font-sans);\n  color: var(--text);\n  background: var(--bg);\n  transition: background 0.35s ease, color 0.35s ease;\n}\n\nbody.app {\n  background: var(--bg);\n  color: var(--text);\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n}\n\nbutton {\n  font: inherit;\n}\n\nimg,\nvideo {\n  max-width: 100%;\n  display: block;\n}\n\n#__next {\n  min-height: 100vh;\n  overflow-x: clip;\n}\n\n.section-padding {\n  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);\n}\n\n@media (max-width: 640px) {\n  .section-padding {\n    padding: 4.5rem 1rem;\n  }\n}\n\nbody.app.cyber {\n  --bg: #050509;\n  --bg-gradient: linear-gradient(135deg, #020206 0%, #0f1222 100%);\n  --panel: rgba(255, 255, 255, 0.05);\n  --panel-strong: rgba(255, 255, 255, 0.12);\n  --text: #f3f4ff;\n  --text-muted: rgba(243, 244, 255, 0.72);\n  --border: rgba(56, 189, 248, 0.28);\n  --accent: #38bdf8;\n  --accent-strong: #c084fc;\n  --accent-soft: #0ea5e9;\n  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.28);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.18);\n  --accent-secondary: rgba(243, 244, 255, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(243, 244, 255, 0.72);\n}\n\nbody.app.dark {\n  --bg: #05060e;\n  --bg-gradient: linear-gradient(135deg, #05060e 0%, #0d1322 100%);\n  --panel: rgba(15, 23, 42, 0.78);\n  --panel-strong: rgba(255, 255, 255, 0.08);\n  --surface: rgba(15, 23, 42, 0.62);\n  --surface-soft: rgba(15, 23, 42, 0.35);\n  --glass: rgba(255, 255, 255, 0.06);\n  --border: rgba(255, 255, 255, 0.12);\n  --text: #f8fafc;\n  --text-muted: rgba(248, 250, 252, 0.72);\n  --accent: #38bdf8;\n  --accent-strong: #7c3aed;\n  --accent-soft: #60a5fa;\n  --shadow: 0 35px 100px rgba(0, 0, 0, 0.6);\n  --card-bg: rgba(255, 255, 255, 0.05);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(56, 189, 248, 0.22);\n  --accent-glow: 0 12px 30px rgba(56, 189, 248, 0.16);\n  --accent-secondary: rgba(248, 250, 252, 0.72);\n  --tag-bg: rgba(255, 255, 255, 0.06);\n  --tag-text: rgba(248, 250, 252, 0.72);\n}\n\nbody.app.light {\n  --bg: #f4f6fb;\n  --bg-gradient: linear-gradient(135deg, #edf2ff 0%, #e2e8f0 100%);\n  --panel: rgba(255, 255, 255, 0.94);\n  --panel-strong: rgba(255, 255, 255, 0.98);\n  --text: #0f172a;\n  --text-muted: rgba(15, 23, 42, 0.68);\n  --border: rgba(15, 23, 42, 0.12);\n  --accent: #2563eb;\n  --accent-strong: #475569;\n  --accent-soft: #94a3b8;\n  --shadow: 0 35px 100px rgba(15, 23, 42, 0.18);\n  --card-bg: rgba(255, 255, 255, 0.95);\n  --bg-primary: var(--bg);\n  --text-primary: var(--text);\n  --text-secondary: var(--text-muted);\n  --border-color: var(--border);\n  --border-hover: rgba(37, 99, 235, 0.18);\n  --accent-glow: 0 12px 30px rgba(37, 99, 235, 0.14);\n  --accent-secondary: rgba(15, 23, 42, 0.72);\n  --tag-bg: rgba(15, 23, 42, 0.08);\n  --tag-text: rgba(15, 23, 42, 0.72);\n}\n\nbody.app.light a,\nbody.app.light button,\nbody.app.light .logo {\n  color: #111111 !important;\n}\n\nbody.app.light .navbar {\n  background: rgba(255, 255, 255, 0.92);\n  border-color: rgba(0, 0, 0, 0.08);\n}\n\nbody.app.dark .navbar {\n  background: rgba(10, 10, 15, 0.95);\n  border-color: rgba(255, 255, 255, 0.08);\n}\n\nbody.app.cyber .navbar {\n  background: rgba(7, 7, 10, 0.92);\n  border-color: rgba(56, 189, 248, 0.18);\n}\n"}</style>
       <div className="portfolioAppContent">
-        <CustomCursor />
         <Navbar mode={mode} setMode={setMode} />
         <main>
-          <Hero mode={mode} playing />
+          <Hero />
           <About />
           <Experience mode={mode} />
           <ProjectShowcase />

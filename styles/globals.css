@@ -1266,3 +1266,555 @@ body.app .visuallyHidden {
   body.app .comingSoonContent h1 { font-size: 40px; }
   body.app .comingSoonFooter { align-items: flex-start; flex-direction: column; gap: 8px; }
 }
+
+body.app .navbar {
+  top: 16px !important;
+  width: min(calc(100% - 48px), 1360px) !important;
+  min-height: 72px;
+  padding: 10px 18px !important;
+  gap: clamp(12px, 1.8vw, 26px);
+  border-radius: 12px !important;
+}
+
+body.app .navBrand {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--text) !important;
+  text-decoration: none;
+}
+
+body.app .navMonogram {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+body.app .navBrandName {
+  display: grid;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+body.app .navBrandName strong {
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+body.app .navBrandName small {
+  color: var(--text-muted);
+  font-size: 9px;
+  letter-spacing: 0.045em;
+}
+
+body.app .navbar .clockButton {
+  min-height: 34px;
+  padding: 6px 8px !important;
+  border: 0 !important;
+  border-radius: 7px;
+  background: var(--surface-soft) !important;
+}
+
+body.app .navbar .clockButton strong {
+  font-size: 11px;
+}
+
+body.app .navbar .links {
+  flex: 1 1 auto;
+  justify-content: center;
+  gap: clamp(10px, 1.65vw, 24px);
+}
+
+body.app .navbar .links button,
+body.app .navbar .academicLinks summary {
+  font-size: 11px !important;
+}
+
+body.app .navbar .modeControl {
+  gap: 7px;
+  white-space: nowrap;
+}
+
+body.app .navbar .modeControl select {
+  max-width: 116px;
+  min-height: 36px;
+  border-radius: 7px;
+}
+
+body.app .heroSplitStage {
+  height: auto !important;
+  min-height: 100svh;
+}
+
+body.app .heroSplitPin {
+  min-height: 100svh !important;
+  padding: 142px clamp(24px, 7vw, 112px) 90px !important;
+}
+
+body.app .heroSplitLayout {
+  gap: clamp(42px, 7vw, 110px) !important;
+}
+
+body.app .heroSplitStage .name-container {
+  margin-bottom: 22px !important;
+  font-family: var(--font-sans) !important;
+  font-size: clamp(3.35rem, 7vw, 6.7rem) !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.085em !important;
+  line-height: 0.92 !important;
+}
+
+body.app .heroSplitStage .name-word {
+  display: block;
+}
+
+body.app .heroSplitStage .name-surname {
+  color: var(--accent) !important;
+}
+
+body.app .heroSplitStage .heroAbout h2 {
+  margin-bottom: 10px !important;
+  color: var(--text) !important;
+  font-family: var(--font-sans) !important;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.035em;
+}
+
+body.app .heroSplitStage .heroAbout p {
+  max-width: 540px;
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+}
+
+body.app .heroSplitStage .heroAboutExtra {
+  margin-top: 8px !important;
+}
+
+body.app .heroSplitStage .heroResearchVisual {
+  width: min(46%, 570px) !important;
+  flex: 1 1 46% !important;
+  min-width: 0;
+  overflow: visible;
+}
+
+body.app .developerConsole {
+  position: relative;
+  width: min(100%, 560px);
+  overflow: hidden;
+  --console-text: #e8f2ec;
+  --console-muted: #9eafa5;
+  --console-accent: #80d8ad;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  border-radius: 14px;
+  background: #111b18;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.22);
+  color: var(--console-text);
+  isolation: isolate;
+}
+
+body.app .developerConsole::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--border) 32%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border) 32%, transparent) 1px, transparent 1px);
+  background-size: 26px 26px;
+  content: "";
+  mask-image: linear-gradient(135deg, #000 0%, transparent 76%);
+  pointer-events: none;
+}
+
+body.app .consoleChrome,
+body.app .consoleFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--console-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+}
+
+body.app .consoleWindowControls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 5px;
+}
+
+body.app .consoleWindowControls span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+body.app .consoleWindowControls span:first-child { background: var(--console-accent); }
+body.app .consoleWindowControls span:nth-child(2) { background: var(--accent-strong); }
+
+body.app .consoleFileName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.app .consoleStatus {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  color: var(--console-accent);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+body.app .consoleStatus i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
+}
+
+body.app .consoleContent {
+  padding: clamp(20px, 3.4vw, 38px);
+}
+
+body.app .consoleEyebrow,
+body.app .consoleFocusLabel {
+  color: var(--console-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+body.app .consoleEyebrow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+body.app .consoleEyebrow span {
+  color: var(--console-muted);
+  font-weight: 500;
+}
+
+body.app .consoleTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 28px;
+}
+
+body.app .consoleTabs button {
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--console-muted);
+  font-size: 10px;
+  font-weight: 650;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+body.app .consoleTabs button[aria-selected="true"],
+body.app .consoleTabs button:hover {
+  border-color: color-mix(in srgb, var(--console-accent) 62%, var(--border));
+  background: color-mix(in srgb, var(--console-accent) 12%, var(--surface));
+  color: var(--console-accent);
+}
+
+body.app .consoleFocus {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  min-height: 178px;
+  align-items: start;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+body.app .consoleFocusIndex {
+  padding-top: 3px;
+  color: var(--console-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+body.app .consoleFocusIndex span {
+  color: var(--console-muted);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+body.app .consoleFocus h2 {
+  margin: 11px 0 8px;
+  color: var(--console-text) !important;
+  font-family: var(--font-sans) !important;
+  font-size: clamp(1.35rem, 2.4vw, 2rem) !important;
+  font-weight: 680 !important;
+  letter-spacing: -0.055em !important;
+  line-height: 1.08;
+}
+
+body.app .consoleFocus p {
+  max-width: 350px;
+  margin: 0;
+  color: var(--console-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+body.app .consolePipeline {
+  padding-top: 23px;
+}
+
+body.app .consolePipeline ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  margin: 14px 0 0;
+  list-style: none;
+}
+
+body.app .consolePipeline li {
+  display: grid;
+  gap: 7px;
+  color: var(--console-muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+body.app .consolePipeline li span {
+  color: var(--accent-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+}
+
+body.app .consoleFooter {
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+}
+
+body.app .heroSplitStage .heroScrollCue {
+  bottom: 24px;
+}
+
+body.app .projectCard,
+body.app .aboutCard,
+body.app .expCard,
+body.app .skillGroup,
+body.app .contactCard,
+body.app .contactList a {
+  border-radius: 9px !important;
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease;
+}
+
+body.app .projectCard:hover,
+body.app .aboutCard.interactive-card:hover,
+body.app .expCard:hover,
+body.app .skillGroup:hover,
+body.app .contactList a:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent) !important;
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--accent) 13%, transparent) !important;
+}
+
+body.app .primary-btn,
+body.app .secondary-btn,
+body.app .categoryButton {
+  min-height: 46px;
+  border-radius: 7px !important;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+body.app .primary-btn:hover,
+body.app .secondary-btn:hover,
+body.app .categoryButton:hover {
+  transform: translateY(-2px);
+}
+
+body.app .projectSection,
+body.app .about,
+body.app .experience,
+body.app .tech-section,
+body.app .contact {
+  scroll-margin-top: 96px;
+}
+
+body.app .customCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 78%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(var(--cursor-x, -100px), var(--cursor-y, -100px), 0) translate(-50%, -50%);
+  transition:
+    width 180ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    height 180ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    border-radius 180ms ease,
+    background 180ms ease,
+    opacity 120ms ease,
+    transform 100ms linear;
+}
+
+body.app .customCursor::after {
+  content: attr(data-label);
+  opacity: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+body.app .customCursor.is-visible { opacity: 1; }
+
+body.app .customCursor.is-interactive {
+  width: 78px;
+  height: 34px;
+  border-radius: 999px;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+body.app .customCursor.is-interactive::after { opacity: 1; }
+body.app .customCursor.is-pressed { transform: translate3d(var(--cursor-x, -100px), var(--cursor-y, -100px), 0) translate(-50%, -50%) scale(0.88); }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.app.customCursorEnabled,
+  body.app.customCursorEnabled a,
+  body.app.customCursorEnabled button,
+  body.app.customCursorEnabled [role="button"] {
+    cursor: none !important;
+  }
+}
+
+@media (max-width: 1080px) and (min-width: 761px) {
+  body.app .navbar {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    row-gap: 3px;
+  }
+
+  body.app .navbar .navBrand { grid-column: 1; grid-row: 1; }
+  body.app .navbar .clockWrap { grid-column: 2; grid-row: 1; justify-self: center; }
+  body.app .navbar .modeControl { grid-column: 3; grid-row: 1; }
+  body.app .navbar .links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 760px) {
+  body.app .navbar {
+    top: 10px !important;
+    width: calc(100% - 24px) !important;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    padding: 8px 10px !important;
+    gap: 4px 10px;
+  }
+
+  body.app .navbar .navBrand { grid-column: 1; grid-row: 1; }
+  body.app .navbar .clockWrap { display: none; }
+  body.app .navbar .modeControl { grid-column: 2; grid-row: 1; }
+  body.app .navbar .modeControl > span { display: none; }
+  body.app .navbar .links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  body.app .navbar .links button,
+  body.app .navbar .academicLinks summary { font-size: 10px !important; }
+  body.app .heroSplitPin {
+    min-height: 0 !important;
+    padding: 146px 22px 74px !important;
+  }
+  body.app .heroSplitLayout { gap: 34px !important; }
+  body.app .heroSplitCopy,
+  body.app .heroResearchVisual {
+    width: 100% !important;
+    flex-basis: auto !important;
+  }
+  body.app .heroSplitStage .heroResearchVisual {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    max-width: 600px;
+    align-self: center;
+  }
+  body.app .heroSplitStage .name-container {
+    font-size: clamp(3.2rem, 14vw, 5.2rem) !important;
+  }
+  body.app .heroSplitStage .heroAbout { margin-bottom: 18px !important; }
+  body.app .heroSplitStage .heroAbout p { font-size: 13px !important; }
+  body.app .heroSplitButtons { gap: 9px; }
+  body.app .heroSplitButtons button { flex: 1 1 auto; }
+  body.app .heroScrollCue { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  body.app .navMonogram { width: 34px; height: 34px; }
+  body.app .navBrandName strong { font-size: 11px; }
+  body.app .navBrandName small { font-size: 8px; }
+  body.app .navbar .modeControl select { max-width: 104px; }
+  body.app .navbar .links { gap: 2px; }
+  body.app .navbar .links button,
+  body.app .navbar .academicLinks summary { font-size: 9px !important; }
+  body.app .heroSplitPin { padding-right: 17px !important; padding-left: 17px !important; }
+  body.app .heroSplitButtons { flex-direction: column; align-items: stretch; }
+  body.app .heroSplitButtons button { width: 100%; }
+  body.app .consoleContent { padding: 19px 16px; }
+  body.app .consoleChrome,
+  body.app .consoleFooter { padding-right: 12px; padding-left: 12px; }
+  body.app .consoleFocus { gap: 12px; min-height: 160px; }
+  body.app .consolePipeline ol { gap: 7px; }
+  body.app .consolePipeline li { font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  body.app .customCursor { display: none !important; }
+}
