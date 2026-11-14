@@ -575,46 +575,6 @@ body.app .contact { min-height: 68vh; }
 
 body.app .portfolioAppContent { display: contents; }
 
-body.app,
-body.app.light,
-body.app.dark,
-body.app.cyber {
-  --bg: #f5f5ef !important;
-  --bg-gradient: linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%) !important;
-  --panel: rgba(255, 255, 250, 0.82) !important;
-  --panel-strong: #fffefa !important;
-  --surface: #fffefa !important;
-  --surface-soft: #eeefe8 !important;
-  --glass: rgba(255, 255, 250, 0.88) !important;
-  --border: #d9ded4 !important;
-  --border-strong: #bdc9bd !important;
-  --text: #202b26 !important;
-  --text-muted: #637169 !important;
-  --accent: #28745d !important;
-  --accent-strong: #b35e43 !important;
-  --accent-soft: #85a68e !important;
-  --shadow: 0 24px 70px rgba(31, 49, 39, 0.09) !important;
-  --shadow-soft: 0 8px 28px rgba(31, 49, 39, 0.07) !important;
-  --stroke: #e2e5dd !important;
-  --card-bg: #fffefa !important;
-  --font-sans: 'DM Sans', sans-serif !important;
-  --bg-primary: var(--bg) !important;
-  --text-primary: var(--text) !important;
-  --text-secondary: var(--text-muted) !important;
-  --border-color: var(--border) !important;
-  --border-hover: #a9c2af !important;
-  --accent-glow: 0 8px 24px rgba(40, 116, 93, 0.13) !important;
-  --accent-secondary: #637169 !important;
-  --tag-bg: #e9eee7 !important;
-  --tag-text: #405e4f !important;
-  background-color: #f5f5ef !important;
-  background-image:
-    radial-gradient(rgba(73, 99, 77, 0.07) 0.55px, transparent 0.55px),
-    linear-gradient(115deg, #f7f7f1 0%, #eef2eb 100%) !important;
-  color: #202b26 !important;
-  font-family: 'DM Sans', sans-serif !important;
-}
-
 body.app .cursor { display: none !important; }
 
 body.app.light {
@@ -753,6 +713,20 @@ body.app .navbar {
   background: var(--nav-bg) !important;
   border-color: var(--border) !important;
   box-shadow: var(--shadow-soft) !important;
+}
+
+body.app .academicMenu .academicMenuLink {
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+body.app .academicMenu .academicMenuLink:hover {
+  color: var(--accent);
+  background: var(--surface-soft);
 }
 
 /* Zone 1: Home to Experience unified background */

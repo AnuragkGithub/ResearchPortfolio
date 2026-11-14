@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import AcademicLayout from "../components/AcademicLayout";
 
 const explorations = [
   {
@@ -36,8 +37,9 @@ const explorations = [
   },
 ];
 
-export default function Exploration() {
+export default function Exploration({ mode, setMode }) {
   return (
+    <AcademicLayout mode={mode} setMode={setMode}>
     <main className="explorationPage">
       <div className="explorationShell">
         <header className="explorationNav">
@@ -299,5 +301,6 @@ export default function Exploration() {
         }
       `}</style>
     </main>
+    </AcademicLayout>
   );
 }

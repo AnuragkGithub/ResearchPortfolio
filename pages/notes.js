@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import AcademicLayout from "../components/AcademicLayout";
 
 const collections = [
   {
@@ -37,8 +38,9 @@ const collections = [
   },
 ];
 
-export default function Notes() {
+export default function Notes({ mode, setMode }) {
   return (
+    <AcademicLayout mode={mode} setMode={setMode}>
     <main className="notesPage">
       <div className="notesShell">
         <header className="notesNav">
@@ -238,5 +240,6 @@ export default function Notes() {
         }
       `}</style>
     </main>
+    </AcademicLayout>
   );
 }

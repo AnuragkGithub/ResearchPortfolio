@@ -529,9 +529,9 @@ function Navbar({ mode, setMode }) {
             <a href="https://www.researchgate.net/profile/Anurag-Karmakar" target="_blank" rel="noreferrer">ResearchGate</a>
             <a href="https://adamas.academia.edu/ANURAGKarmakar" target="_blank" rel="noreferrer">Academia.edu</a>
             <span className="academicMenuLabel academicMenuDivider">MORE</span>
-            <Link href="/subjects-taught">Subjects Taught</Link>
-            <Link href="/notes">Notes</Link>
-            <Link href="/exploration">Exploration</Link>
+            <Link href="/subjects-taught" className="academicMenuLink">Subjects Taught</Link>
+            <Link href="/notes" className="academicMenuLink">Notes</Link>
+            <Link href="/exploration" className="academicMenuLink">Exploration</Link>
           </div>
         </details>
       </div>

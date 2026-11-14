@@ -10,10 +10,13 @@ const timeZones = [
   { label: "Your device", value: "local" },
 ];
 
-export default function AcademicLayout({ children }) {
+export default function AcademicLayout({
+  children,
+  mode = "light",
+  setMode = () => {},
+}) {
   const [now, setNow] = useState(null);
   const [zone, setZone] = useState("Asia/Kolkata");
-  const [mode, setMode] = useState("dark");
 
   useEffect(() => {
     const tick = () => setNow(new Date());
@@ -21,10 +24,6 @@ export default function AcademicLayout({ children }) {
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = mode;
-  }, [mode]);
 
   const activeZone =
     zone === "local"
@@ -106,7 +105,7 @@ export default function AcademicLayout({ children }) {
               </a>
               <div className="menuDivider" />
               {links.map(([label, href]) => (
-                <Link href={href} key={href}>
+                <Link href={href} key={href} className="academicMenuLink">
                   {label}
                 </Link>
               ))}
@@ -201,8 +200,8 @@ export default function AcademicLayout({ children }) {
 
         .clockControl option,
         .appearance option {
-          background: #14221d;
-          color: #edf1e9;
+          background: var(--panel-strong, #14221d);
+          color: var(--text, #edf1e9);
         }
 
         .reach {
@@ -262,22 +261,22 @@ export default function AcademicLayout({ children }) {
           padding: 10px;
           border: 1px solid var(--border, #2b3b35);
           border-radius: 10px;
-          background: #14221d;
+          background: var(--panel-strong, #14221d);
           box-shadow: 0 12px 35px #0004;
         }
 
         .academicMenu a {
           display: block;
           padding: 10px;
-          color: #dce8df;
+          color: var(--text, #dce8df);
           font-size: 12px;
           text-decoration: none;
           border-radius: 5px;
         }
 
         .academicMenu a:hover {
-          color: #7bc9a5;
-          background: #ffffff09;
+          color: var(--accent, #7bc9a5);
+          background: var(--surface-soft, #ffffff09);
         }
 
         .menuDivider {

@@ -81,9 +81,9 @@ const responsibilities = [
   },
 ];
 
-export default function SubjectsTaught() {
+export default function SubjectsTaught({ mode, setMode }) {
   return (
-    <AcademicLayout>
+    <AcademicLayout mode={mode} setMode={setMode}>
     <main className="academicPage">
       <div className="academicShell">
         <header className="academicNav">
