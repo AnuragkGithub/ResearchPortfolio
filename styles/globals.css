@@ -76,6 +76,74 @@ video {
   overflow-x: clip;
 }
 
+.portfolioIntroLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+    var(--bg-gradient);
+  color: var(--text);
+  opacity: 1;
+  transition: opacity 350ms ease;
+}
+
+.portfolioIntroLoader.is-complete {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portfolioIntroContent {
+  width: min(440px, 100%);
+}
+
+.portfolioIntroEyebrow,
+.portfolioIntroProgress {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+}
+
+.portfolioIntroName {
+  margin: 18px 0 42px;
+  font-size: clamp(1.7rem, 7vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.07em;
+}
+
+.portfolioIntroProgress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.portfolioIntroProgress strong {
+  color: var(--accent);
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.portfolioIntroTrack {
+  height: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.portfolioIntroTrack span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent);
+  transition: width 80ms linear;
+}
+
 .section-padding {
   padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 6vw, 5rem);
 }
