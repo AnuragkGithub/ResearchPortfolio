@@ -280,7 +280,7 @@ body.app .navbar .modeButton { display: none; }
 
 body.app .heroSplitStage {
   height: auto !important;
-  min-height: 100svh;
+  min-height: min(100svh, 60rem);
   padding-top: 75px;
   background: var(--bg-gradient) !important;
 }
@@ -288,7 +288,7 @@ body.app .heroSplitStage {
 body.app .heroSplitPin {
   position: relative !important;
   top: auto !important;
-  min-height: 760px !important;
+  min-height: min(100svh, 60rem) !important;
   height: auto !important;
   padding: 105px clamp(22px, 7vw, 100px) 86px !important;
   overflow: hidden;
@@ -508,7 +508,7 @@ body.app .categoryButton.active {
   color: white !important;
 }
 
-body.app .contact { min-height: 68vh; }
+body.app .contact { min-height: min(68vh, 60rem); }
 
 @media (max-width: 760px) {
   body.app .navbar {
@@ -1354,11 +1354,11 @@ body.app .navbar .modeControl select {
 
 body.app .heroSplitStage {
   height: auto !important;
-  min-height: 100svh;
+  min-height: min(100svh, 60rem);
 }
 
 body.app .heroSplitPin {
-  min-height: 100svh !important;
+  min-height: min(100svh, 60rem) !important;
   padding: 142px clamp(24px, 7vw, 112px) 90px !important;
 }
 
